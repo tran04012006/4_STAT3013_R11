@@ -1,0 +1,29 @@
+rows train/valid/test: 814951 204663 177713
+A_no_promo               iters=  422 valid WAPE=0.5661 test WAPE=0.5953 (130s)
+A+_past_promo            iters=  303 valid WAPE=0.5607 test WAPE=0.5921 (110s)
+B1_+future_flag          iters=  266 valid WAPE=0.5347 test WAPE=0.5764 (85s)
+B2_+future_depth         iters=  216 valid WAPE=0.5361 test WAPE=0.5743 (61s)
+B_full_future            iters=  338 valid WAPE=0.5324 test WAPE=0.5725 (91s)
+A_no_promo@Bparams       iters=  470 valid WAPE=0.5668 test WAPE=0.5956 (104s)
+B_full_future@Aparams    iters=  311 valid WAPE=0.5329 test WAPE=0.5712 (86s)
+                   model       feature_set params_from  n_features  best_iter_valid  n_trees_final  valid_WAPE  test_WAPE  test_MAE  test_RMSE  test_Bias_pct  minutes
+0             A_no_promo        A_no_promo           A          41            422.0          464.0    0.566145   0.595258  2.663571  11.962815      -0.146704     2.17
+1          A+_past_promo     A+_past_promo           B          47            303.0          333.0    0.560729   0.592079  2.649345  12.011821      -0.139280     1.83
+2        B1_+future_flag   B1_+future_flag           B          49            266.0          293.0    0.534705   0.576449  2.579409  11.897905      -0.111135     1.42
+3       B2_+future_depth  B2_+future_depth           B          54            216.0          238.0    0.536118   0.574274  2.569675  11.784411      -0.101006     1.01
+4          B_full_future     B_full_future           B          61            338.0          372.0    0.532438   0.572532  2.561880  11.911061      -0.129067     1.51
+5     A_no_promo@Bparams        A_no_promo           B          41            470.0          517.0    0.566825   0.595604  2.665118  12.053659      -0.151282     1.73
+6  B_full_future@Aparams     B_full_future           A          61            311.0          342.0    0.532934   0.571162  2.555751  11.942010      -0.125415     1.44
+7          SeasonalNaive          baseline           -           1              NaN            NaN    0.691429   0.696928  3.118510  14.700333      -0.006253      NaN
+8            MovingAvg28          baseline           -           1              NaN            NaN    0.635228   0.684099  3.061106  12.648639      -0.000967      NaN
+                           WAPE                 MAE                 RMSE          
+                           mean       std      mean       std       mean       std
+model                                                                             
+A+_past_promo          0.594119  0.000778  2.658476  0.003483  12.042966  0.037680
+A_no_promo             0.597403  0.000726  2.673168  0.003248  11.993169  0.041687
+A_no_promo@Bparams     0.597892  0.000796  2.675360  0.003562  12.086079  0.009378
+B1_+future_flag        0.578183  0.000537  2.587168  0.002403  11.927556  0.030449
+B2_+future_depth       0.575917  0.000449  2.577027  0.002009  11.808543  0.022012
+B_full_future          0.574361  0.000829  2.570064  0.003708  11.940547  0.020362
+B_full_future@Aparams  0.573092  0.000474  2.564388  0.002123  11.973126  0.035702
+total 11.1 min

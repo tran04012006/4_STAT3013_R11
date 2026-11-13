@@ -1,0 +1,62 @@
+feature,mean_abs_shap,group
+ewm_7,0.7754051039799107,Demand history
+roll_std_28,0.166529929651218,Demand history
+roll_mean_14,0.16194383375275248,Demand history
+roll_mean_7,0.15664997474776088,Demand history
+days_to_next_promo,0.13703107225127764,Future promo: timing
+item_type,0.1157766992169705,Static product/store
+dow_mean_4w,0.10948605533865345,Demand history
+subclass_name,0.1089361690565249,Static product/store
+lag_7,0.10444414346506946,Demand history
+days_since_last_promo,0.09013568654545115,Future promo: timing
+day_in_promo,0.08965201185915991,Future promo: timing
+hist_mean,0.07967633756150036,Demand history
+price,0.07355608267119619,Future promo: depth/price
+area,0.05646591471083135,Static product/store
+roll_mean_91,0.05580034289075376,Demand history
+dow,0.05412121913538746,Calendar
+series_age,0.053034220375288196,Demand history
+roll_mean_28,0.047368014252393995,Demand history
+regular_price,0.04218260581733525,Static product/store
+class_name,0.03862234247064074,Static product/store
+hist_promo_lift,0.0383258537121555,Past promo (as of t-7)
+days_to_promo_end,0.0364240543750809,Future promo: timing
+promo_share_28_lag7,0.03407393429411406,Past promo (as of t-7)
+store_id,0.03221473733377989,Static product/store
+days_since_promo_lag7,0.03128447138526752,Past promo (as of t-7)
+roll_zero_share_28,0.029933860797385865,Demand history
+depth,0.023390748659707524,Future promo: depth/price
+weight_netto,0.019615390160089046,Static product/store
+weight_volume,0.019602717541295795,Static product/store
+days_to_holiday,0.01937095956451213,Calendar
+is_friday,0.01669437414994634,Calendar
+promo_duration,0.015373385070972627,Future promo: timing
+days_after_holiday,0.015350682038104151,Calendar
+day_of_month,0.014607425591276126,Calendar
+price_ratio,0.013678899854391807,Future promo: depth/price
+promo_days_next_7,0.013526599594916356,Future promo: timing
+depth_lag7,0.011797589606659616,Past promo (as of t-7)
+year,0.011596172768810292,Calendar
+lag_28,0.011333109317987049,Demand history
+log_regular_price,0.010493626829372162,Static product/store
+store4_period,0.009224488361588408,Calendar
+promo_type,0.009096316437480505,Future promo: depth/price
+week,0.008477819549121449,Calendar
+post_promo_1_7,0.008185183840001614,Future promo: timing
+lag_14,0.008173442400056958,Demand history
+pheic,0.0072071367673251455,Calendar
+day_in_promo_lag7,0.006767676007147004,Past promo (as of t-7)
+dept_name,0.005125325227474013,Static product/store
+lag_21,0.004991707958408955,Demand history
+promo_status,0.003806816795076813,Future promo: flag
+in_promo_any,0.0033771394391941606,Future promo: flag
+depth_x_food,0.003082951484510683,Future promo: depth/price
+ny_break,0.0030238832577767958,Calendar
+month,0.002595644656257961,Calendar
+promo_lag7,0.002437981374583998,Past promo (as of t-7)
+is_weekend,0.002079908190410796,Calendar
+holiday_status,0.0014487559390091475,Calendar
+is_food,0.001160092733978199,Static product/store
+is_holiday,0.0006348949874708016,Calendar
+minor_holiday,0.0005993141808299486,Calendar
+group4,0.0005976551826869604,Static product/store

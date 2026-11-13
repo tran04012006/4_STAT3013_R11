@@ -1,0 +1,55 @@
+{
+  "feature_set": "B_full_future",
+  "method": "manual grid search + hold-out validation + early stopping",
+  "holdout": [
+    "2024-04-01",
+    "2024-06-30"
+  ],
+  "train_end": "2024-03-31",
+  "best_valid_wape": 0.532438341798717,
+  "best_iter": 338,
+  "params": {
+    "objective": "tweedie",
+    "learning_rate": 0.05,
+    "bagging_fraction": 0.8,
+    "lambda_l1": 0.01,
+    "lambda_l2": 1.0,
+    "cat_smooth": 10.0,
+    "num_leaves": 511,
+    "min_data_in_leaf": 200,
+    "feature_fraction": 0.8,
+    "tweedie_variance_power": 1.6
+  },
+  "grid": {
+    "num_leaves": [
+      63,
+      255,
+      511
+    ],
+    "min_data_in_leaf": [
+      50,
+      200,
+      800
+    ],
+    "feature_fraction": [
+      0.5,
+      0.8
+    ],
+    "tweedie_variance_power": [
+      1.3,
+      1.6
+    ]
+  },
+  "fixed": {
+    "objective": "tweedie",
+    "learning_rate": 0.05,
+    "bagging_fraction": 0.8,
+    "lambda_l1": 0.01,
+    "lambda_l2": 1.0,
+    "cat_smooth": 10.0
+  },
+  "max_rounds": 4000,
+  "early_stopping_rounds": 100,
+  "n_combinations": 36,
+  "minutes": 22.9
+}

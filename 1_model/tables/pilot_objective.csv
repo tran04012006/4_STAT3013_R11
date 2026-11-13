@@ -1,0 +1,7 @@
+feature_set,objective,best_iter,valid_WAPE,seconds
+A_no_promo,tweedie,337,0.5774792710738527,23.2
+A_no_promo,poisson,472,0.5842957205761122,30.7
+A_no_promo,l2log,171,0.6018920721618898,15.1
+B_full_future,tweedie,350,0.5385686273976885,25.8
+B_full_future,poisson,542,0.5463283872296555,35.5
+B_full_future,l2log,159,0.5700363302767228,15.8
