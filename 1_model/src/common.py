@@ -2,7 +2,8 @@
 import numpy as np
 import pandas as pd
 import lightgbm as lgb
-from config import DATA_FEAT, TARGET, CATEGORICAL, N_THREADS, SEED
+from scipy import stats
+from config import DATA_FEAT, TARGET, CATEGORICAL, N_THREADS, SEED, DRYRUN
 
 _DF = None
 
@@ -49,6 +50,32 @@ def make_lgb_wape(transform):
             y, preds = np.expm1(y), np.expm1(preds)
         return "wape", wape(y, np.clip(preds, 0, None)), False
     return _f
+
+
+# ------------------------------------------------------------------ significance
+def dm_test(loss_a, loss_b, h=7):
+    """Diebold-Mariano with Newey-West variance (lag h-1) and the Harvey et al. (1997)
+    small-sample correction. Positive statistic -> model b has lower loss."""
+    dlt = np.asarray(loss_a) - np.asarray(loss_b)
+    T = len(dlt); mu = dlt.mean()
+    gam = [np.sum((dlt[k:] - mu) * (dlt[:T - k] - mu)) / T for k in range(h)]
+    var = (gam[0] + 2 * sum((1 - k / h) * gam[k] for k in range(1, h))) / T
+    stat = mu / np.sqrt(var)
+    stat *= np.sqrt((T + 1 - 2 * h + h * (h - 1) / T) / T)
+    p = 2 * stats.t.sf(abs(stat), df=T - 1)
+    return stat, p
+
+
+def cluster_bootstrap(g, a, b, n_boot=200 if DRYRUN else 2000, seed=SEED):
+    """Resample item-store series with replacement; CI of WAPE_a - WAPE_b (pp)."""
+    g = g.assign(ea=(g["quantity"] - g[f"pred_{a}"]).abs(), eb=(g["quantity"] - g[f"pred_{b}"]).abs())
+    s = g.groupby(["item_id", "store_id"])[["ea", "eb", "quantity"]].sum().values
+    rng = np.random.default_rng(seed)
+    idx = rng.integers(0, len(s), size=(n_boot, len(s)))
+    ea, eb, y = s[:, 0][idx].sum(1), s[:, 1][idx].sum(1), s[:, 2][idx].sum(1)
+    diff = (ea - eb) / y * 100
+    point = (s[:, 0].sum() - s[:, 1].sum()) / s[:, 2].sum() * 100
+    return point, np.percentile(diff, 2.5), np.percentile(diff, 97.5), float((diff <= 0).mean())
 
 
 # ------------------------------------------------------------------ model

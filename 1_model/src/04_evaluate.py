@@ -9,8 +9,8 @@ Reads 1_model/predictions/predictions_test.parquet (and _valid) and writes:
 import numpy as np
 import pandas as pd
 from scipy import stats
-from common import metrics
-from config import PRED, TAB, SEED, DRYRUN
+from common import metrics, dm_test, cluster_bootstrap
+from config import PRED, TAB
 
 pt = pd.read_parquet(PRED / "predictions_test.parquet")
 pv = pd.read_parquet(PRED / "predictions_valid.parquet")
@@ -45,31 +45,6 @@ sg.to_csv(TAB / "metrics_by_segment.csv", index=False)
 
 
 # ------------------------------------------------------------------ significance
-def dm_test(loss_a, loss_b, h=7):
-    """Diebold-Mariano with Newey-West variance (lag h-1) and the Harvey et al. (1997)
-    small-sample correction. Positive statistic -> model b has lower loss."""
-    dlt = np.asarray(loss_a) - np.asarray(loss_b)
-    T = len(dlt); mu = dlt.mean()
-    gam = [np.sum((dlt[k:] - mu) * (dlt[:T - k] - mu)) / T for k in range(h)]
-    var = (gam[0] + 2 * sum((1 - k / h) * gam[k] for k in range(1, h))) / T
-    stat = mu / np.sqrt(var)
-    stat *= np.sqrt((T + 1 - 2 * h + h * (h - 1) / T) / T)
-    p = 2 * stats.t.sf(abs(stat), df=T - 1)
-    return stat, p
-
-
-def cluster_bootstrap(g, a, b, n_boot=200 if DRYRUN else 2000, seed=SEED):
-    """Resample item-store series with replacement; CI of WAPE_a - WAPE_b (pp)."""
-    g = g.assign(ea=(g["quantity"] - g[f"pred_{a}"]).abs(), eb=(g["quantity"] - g[f"pred_{b}"]).abs())
-    s = g.groupby(["item_id", "store_id"])[["ea", "eb", "quantity"]].sum().values
-    rng = np.random.default_rng(seed)
-    idx = rng.integers(0, len(s), size=(n_boot, len(s)))
-    ea, eb, y = s[:, 0][idx].sum(1), s[:, 1][idx].sum(1), s[:, 2][idx].sum(1)
-    diff = (ea - eb) / y * 100
-    point = (s[:, 0].sum() - s[:, 1].sum()) / s[:, 2].sum() * 100
-    return point, np.percentile(diff, 2.5), np.percentile(diff, 97.5), float((diff <= 0).mean())
-
-
 PAIRS = [("SeasonalNaive", "A_no_promo"), ("A_no_promo", "A+_past_promo"),
          ("A+_past_promo", "B_full_future"), ("A_no_promo", "B_full_future"),
          ("A_no_promo@Bparams", "B_full_future"), ("A_no_promo", "B_full_future@Aparams")]
