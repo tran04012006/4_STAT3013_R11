@@ -1,0 +1,139 @@
+Panel (1197327, 58), 4063 cặp, 761 ngày; train ≤ ngày 581, valid ≤ ngày 672
+Feature: 19 KM/giá + 22 lịch/lễ + 2 lịch sử bán + 5 tĩnh; dựng xong 4s
+Cửa sổ train: 816,119 | khối valid: 29,596 | khối test: 26,672
+  [log_mse L=28] epoch  1  train_loss=0.3742  valid WAPE=0.5667  (41s)
+  [log_mse L=28] epoch  2  train_loss=0.3318  valid WAPE=0.5604  (32s)
+  [log_mse L=28] epoch  3  train_loss=0.3205  valid WAPE=0.5452  (32s)
+  [log_mse L=28] epoch  4  train_loss=0.3157  valid WAPE=0.5517  (30s)
+  [log_mse L=28] epoch  5  train_loss=0.3146  valid WAPE=0.5410  (28s)
+  [log_mse L=28] epoch  6  train_loss=0.3093  valid WAPE=0.5485  (29s)
+  [log_mse L=28] epoch  7  train_loss=0.3101  valid WAPE=0.5742  (30s)
+  [log_mse L=28] epoch  8  train_loss=0.3068  valid WAPE=0.5484  (31s)
+  [log_mse L=28] epoch  9  train_loss=0.3044  valid WAPE=0.5641  (30s)
+==> log_mse L=28: valid WAPE tốt nhất = 0.5410
+  [log_mse L=56] epoch  1  train_loss=0.3944  valid WAPE=0.5781  (48s)
+  [log_mse L=56] epoch  2  train_loss=0.3352  valid WAPE=0.5610  (45s)
+  [log_mse L=56] epoch  3  train_loss=0.3212  valid WAPE=0.5564  (47s)
+  [log_mse L=56] epoch  4  train_loss=0.3156  valid WAPE=0.5503  (45s)
+  [log_mse L=56] epoch  5  train_loss=0.3148  valid WAPE=0.5427  (46s)
+  [log_mse L=56] epoch  6  train_loss=0.3087  valid WAPE=0.5505  (45s)
+  [log_mse L=56] epoch  7  train_loss=0.3094  valid WAPE=0.5522  (47s)
+  [log_mse L=56] epoch  8  train_loss=0.3066  valid WAPE=0.5478  (45s)
+  [log_mse L=56] epoch  9  train_loss=0.3038  valid WAPE=0.5566  (44s)
+==> log_mse L=56: valid WAPE tốt nhất = 0.5427
+  [raw_mae L=28] epoch  1  train_loss=2.6274  valid WAPE=0.5796  (28s)
+  [raw_mae L=28] epoch  2  train_loss=2.5790  valid WAPE=0.5766  (29s)
+  [raw_mae L=28] epoch  3  train_loss=2.4659  valid WAPE=0.5526  (30s)
+  [raw_mae L=28] epoch  4  train_loss=2.3670  valid WAPE=0.5416  (28s)
+  [raw_mae L=28] epoch  5  train_loss=2.3500  valid WAPE=0.5325  (29s)
+  [raw_mae L=28] epoch  6  train_loss=2.2710  valid WAPE=0.5245  (30s)
+  [raw_mae L=28] epoch  7  train_loss=2.3120  valid WAPE=0.5251  (29s)
+  [raw_mae L=28] epoch  8  train_loss=2.2990  valid WAPE=0.5186  (31s)
+  [raw_mae L=28] epoch  9  train_loss=2.2586  valid WAPE=0.5188  (28s)
+  [raw_mae L=28] epoch 10  train_loss=2.2457  valid WAPE=0.5164  (28s)
+  [raw_mae L=28] epoch 11  train_loss=2.2225  valid WAPE=0.5144  (28s)
+  [raw_mae L=28] epoch 12  train_loss=2.1940  valid WAPE=0.5166  (29s)
+  [raw_mae L=28] epoch 13  train_loss=2.2045  valid WAPE=0.5129  (28s)
+  [raw_mae L=28] epoch 14  train_loss=2.1771  valid WAPE=0.5173  (29s)
+  [raw_mae L=28] epoch 15  train_loss=2.1848  valid WAPE=0.5120  (28s)
+  [raw_mae L=28] epoch 16  train_loss=2.1452  valid WAPE=0.5191  (28s)
+  [raw_mae L=28] epoch 17  train_loss=2.1846  valid WAPE=0.5128  (28s)
+  [raw_mae L=28] epoch 18  train_loss=2.0845  valid WAPE=0.5115  (28s)
+  [raw_mae L=28] epoch 19  train_loss=2.1311  valid WAPE=0.5092  (30s)
+  [raw_mae L=28] epoch 20  train_loss=2.0893  valid WAPE=0.5166  (29s)
+==> raw_mae L=28: valid WAPE tốt nhất = 0.5092
+  [raw_mae L=56] epoch  1  train_loss=2.7367  valid WAPE=0.5984  (53s)
+  [raw_mae L=56] epoch  2  train_loss=2.6475  valid WAPE=0.5887  (47s)
+  [raw_mae L=56] epoch  3  train_loss=2.5216  valid WAPE=0.5654  (55s)
+  [raw_mae L=56] epoch  4  train_loss=2.4172  valid WAPE=0.5436  (56s)
+  [raw_mae L=56] epoch  5  train_loss=2.3813  valid WAPE=0.5297  (56s)
+  [raw_mae L=56] epoch  6  train_loss=2.2835  valid WAPE=0.5257  (56s)
+  [raw_mae L=56] epoch  7  train_loss=2.3247  valid WAPE=0.5289  (54s)
+  [raw_mae L=56] epoch  8  train_loss=2.3125  valid WAPE=0.5212  (46s)
+  [raw_mae L=56] epoch  9  train_loss=2.2544  valid WAPE=0.5201  (45s)
+  [raw_mae L=56] epoch 10  train_loss=2.2384  valid WAPE=0.5172  (45s)
+  [raw_mae L=56] epoch 11  train_loss=2.2173  valid WAPE=0.5177  (46s)
+  [raw_mae L=56] epoch 12  train_loss=2.1826  valid WAPE=0.5188  (45s)
+  [raw_mae L=56] epoch 13  train_loss=2.1730  valid WAPE=0.5107  (45s)
+  [raw_mae L=56] epoch 14  train_loss=2.1403  valid WAPE=0.5125  (46s)
+  [raw_mae L=56] epoch 15  train_loss=2.1512  valid WAPE=0.5145  (46s)
+  [raw_mae L=56] epoch 16  train_loss=2.1049  valid WAPE=0.5131  (47s)
+  [raw_mae L=56] epoch 17  train_loss=2.1500  valid WAPE=0.5114  (46s)
+==> raw_mae L=56: valid WAPE tốt nhất = 0.5107
+Biến thể được chọn: raw_mae L=28 (valid WAPE 0.5092)  — 2111s
+HistGradientBoosting (Poisson, 400 cây) train xong 63s
+
+### valid_overall
+     lstm_WAPE  hgb_WAPE  seasonal_naive_WAPE  ma7_WAPE         n
+all     0.5092    0.5681               0.6913    0.5822  204663.0
+
+### test_overall
+     lstm_WAPE  hgb_WAPE  seasonal_naive_WAPE  ma7_WAPE         n
+all      0.549    0.6047               0.6956    0.6049  177713.0
+
+### test_by_promo
+                   lstm_WAPE  hgb_WAPE  seasonal_naive_WAPE  ma7_WAPE         n
+promo_day                                                                      
+KM không giảm giá     0.5089    0.5746               0.5797    0.5383    6874.0
+không KM              0.5564    0.6088               0.7170    0.6188  146371.0
+promo (giảm giá)      0.5381    0.6041               0.6657    0.5796   24468.0
+
+### test_by_category
+           lstm_WAPE  hgb_WAPE  seasonal_naive_WAPE  ma7_WAPE        n
+category                                                              
+food          0.5221    0.5714               0.6528    0.5693  87185.0
+household     0.7498    0.8535               1.0150    0.8704  90528.0
+
+### test_by_group4
+        lstm_WAPE  hgb_WAPE  seasonal_naive_WAPE  ma7_WAPE        n
+group4                                                             
+F1         0.5332    0.5926               0.6552    0.5696  48319.0
+F2         0.4947    0.5192               0.6469    0.5687  38866.0
+H1         0.7254    0.8177               0.9790    0.8319  71786.0
+H2         0.9644    1.1690               1.3323    1.2095  18742.0
+
+### test_by_horizon
+   lstm_WAPE  hgb_WAPE  seasonal_naive_WAPE  ma7_WAPE        n
+h                                                             
+1     0.5175    0.6064               0.6969    0.5519  26410.0
+2     0.5296    0.6134               0.7093    0.5862  26230.0
+3     0.5291    0.5995               0.6839    0.5769  26051.0
+4     0.5359    0.5875               0.6910    0.5914  25714.0
+5     0.5405    0.5736               0.6513    0.6063  24550.0
+6     0.5725    0.6222               0.7100    0.6377  24441.0
+7     0.6221    0.6392               0.7379    0.6862  24317.0
+
+### Permutation importance (valid, WAPE gốc 0.5092)
+       feature_group  valid_wape_permuted  delta_wape
+       history_sales               1.4397      0.9305
+static_store_product               0.5796      0.0704
+promo_schedule_depth               0.5648      0.0556
+         price_level               0.5230      0.0138
+          post_promo               0.5167      0.0075
+           month_dom               0.5103      0.0011
+             holiday               0.5103      0.0011
+  dow_weekend_friday               0.5092      0.0000
+ regime_store4_pheic               0.5092      0.0000
+
+### Mô phỏng depth (ngày KM giảm giá trong test)
+  depth  category  n_days  pred_qty  pred_revenue  actual_qty  pred_qty_idx_vs_20pct  pred_revenue_idx_vs_20pct
+thực tế      food   10214  99855.02   19079076.00   105247.17                 102.05                      99.85
+thực tế household   14254   8854.09    1353094.88    15195.00                 108.53                      96.46
+   0.05      food   10214  86817.14   19991740.00   105247.17                  88.72                     104.63
+   0.05 household   14254   6962.23    1389994.38    15195.00                  85.34                      99.09
+    0.1      food   10214  90321.25   19749352.00   105247.17                  92.30                     103.36
+    0.1 household   14254   7338.86    1398990.12    15195.00                  89.96                      99.73
+   0.15      food   10214  93993.03   19455242.00   105247.17                  96.05                     101.82
+   0.15 household   14254   7736.86    1403400.12    15195.00                  94.84                     100.04
+    0.2      food   10214  97853.68   19107194.00   105247.17                 100.00                     100.00
+    0.2 household   14254   8158.08    1402819.75    15195.00                 100.00                     100.00
+   0.25      food   10214 101913.43   18699576.00   105247.17                 104.15                      97.87
+   0.25 household   14254   8603.88    1396585.50    15195.00                 105.46                      99.56
+    0.3      food   10214 106191.15   18228124.00   105247.17                 108.52                      95.40
+    0.3 household   14254   9076.85    1384147.38    15195.00                 111.26                      98.67
+   0.35      food   10214 110713.16   17687940.00   105247.17                 113.14                      92.57
+   0.35 household   14254   9578.75    1364755.00    15195.00                 117.41                      97.29
+    0.4      food   10214 115507.05   17073622.00   105247.17                 118.04                      89.36
+    0.4 household   14254  10111.29    1337585.75    15195.00                 123.94                      95.35
+
+Xong trong 2198s. Kết quả ở D:\UIT-3.1\PTTK\projetc\output\lstm

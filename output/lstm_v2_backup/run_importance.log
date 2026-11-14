@@ -1,0 +1,15 @@
+Panel (1197327, 58), 4063 cặp, 761 ngày; train ≤ ngày 581, valid ≤ ngày 672
+Feature: 19 KM/giá + 22 lịch/lễ + 2 lịch sử bán + 5 tĩnh; dựng xong 7s
+Cửa sổ train: 816,119 | khối valid: 29,596 | khối test: 26,672
+
+### Feature-group importance (valid, WAPE gốc 0.5092, 3 lần)
+       feature_group  valid_wape_permuted  delta_wape  delta_sd
+       history_sales               1.4440      0.9348    0.0136
+static_store_product               0.5763      0.0672    0.0023
+promo_schedule_depth               0.5630      0.0538    0.0013
+  dow_weekend_friday               0.5465      0.0374    0.0011
+         price_level               0.5263      0.0171    0.0025
+          post_promo               0.5165      0.0073    0.0012
+           month_dom               0.5163      0.0071    0.0005
+             holiday               0.5149      0.0057    0.0005
+ regime_store4_pheic               0.5112      0.0021    0.0006

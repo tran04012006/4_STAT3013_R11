@@ -1,0 +1,15 @@
+# Dữ liệu (quá nặng cho GitHub, > 100MB/file) — chia sẻ riêng qua Drive/Kaggle
+dataset/
+dataset_clean/
+data_model/
+output/features/
+
+# Tạm / cache
+tmp/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Bí mật (token Kaggle...) — không bao giờ commit
+kaggle.json
+.env

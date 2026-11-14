@@ -1,0 +1,5 @@
+variant,loss,lookback,best_valid_wape,epochs_run,best_epoch
+log_mse_L28,log_mse,28,0.540995,9,5
+log_mse_L56,log_mse,56,0.5427011,9,5
+raw_mae_L28,raw_mae,28,0.5091897,20,19
+raw_mae_L56,raw_mae,56,0.5107361,17,13

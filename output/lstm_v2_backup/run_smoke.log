@@ -1,0 +1,90 @@
+Panel (1197327, 58), 4063 cặp, 761 ngày; train ≤ ngày 581, valid ≤ ngày 672
+Feature: 19 KM/giá + 22 lịch/lễ + 2 lịch sử bán + 5 tĩnh; dựng xong 3s
+Cửa sổ train: 816,119 | khối valid: 29,596 | khối test: 26,672
+  [log_mse L=28] epoch  1  train_loss=0.4084  valid WAPE=0.5921  (3s)
+  [log_mse L=28] epoch  2  train_loss=0.4097  valid WAPE=0.5918  (4s)
+==> log_mse L=28: valid WAPE tốt nhất = 0.5918
+Biến thể được chọn: log_mse L=28 (valid WAPE 0.5918)  — 12s
+  [HGB lr=0.05 leaves=63 min_leaf=50] valid WAPE tốt nhất của cấu hình = 0.5874  (16s)
+  [HGB lr=0.05 leaves=31 min_leaf=20] valid WAPE tốt nhất của cấu hình = 0.5954  (13s)
+==> HGB được chọn: lr=0.05, leaves=63, min_leaf=50, 60 cây (valid WAPE 0.5874)
+HistGradientBoosting (Poisson) tune + train xong 60s
+
+### train_overall
+     lstm_WAPE  hgb_WAPE  hgb_default_WAPE  seasonal_naive_WAPE  ma7_WAPE         n
+all     0.6259    0.6113            0.6113               0.7424    0.6385  814409.0
+
+### valid_overall
+     lstm_WAPE  hgb_WAPE  hgb_default_WAPE  seasonal_naive_WAPE  ma7_WAPE         n
+all     0.5918    0.5874            0.5874               0.6913    0.5822  204663.0
+
+### test_overall
+     lstm_WAPE  hgb_WAPE  hgb_default_WAPE  seasonal_naive_WAPE  ma7_WAPE         n
+all     0.6239    0.6209            0.6209               0.6956    0.6049  177713.0
+
+### test_by_promo
+                   lstm_WAPE  hgb_WAPE  hgb_default_WAPE  seasonal_naive_WAPE  ma7_WAPE         n
+promo_day                                                                                        
+KM không giảm giá     0.6152    0.5878            0.5878               0.5797    0.5383    6874.0
+không KM              0.6241    0.6272            0.6272               0.7170    0.6188  146371.0
+promo (giảm giá)      0.6286    0.6113            0.6113               0.6657    0.5796   24468.0
+
+### test_by_category
+           lstm_WAPE  hgb_WAPE  hgb_default_WAPE  seasonal_naive_WAPE  ma7_WAPE        n
+category                                                                                
+food          0.5980    0.5793            0.5793               0.6528    0.5693  87185.0
+household     0.8175    0.9310            0.9310               1.0150    0.8704  90528.0
+
+### test_by_group4
+        lstm_WAPE  hgb_WAPE  hgb_default_WAPE  seasonal_naive_WAPE  ma7_WAPE        n
+group4                                                                               
+F1         0.6227    0.5988            0.5988               0.6552    0.5696  48319.0
+F2         0.5373    0.5315            0.5315               0.6469    0.5687  38866.0
+H1         0.7855    0.8792            0.8792               0.9790    0.8319  71786.0
+H2         1.0985    1.3865            1.3865               1.3323    1.2095  18742.0
+
+### test_by_horizon
+   lstm_WAPE  hgb_WAPE  hgb_default_WAPE  seasonal_naive_WAPE  ma7_WAPE        n
+h                                                                               
+1     0.6036    0.6298            0.6298               0.6969    0.5519  26410.0
+2     0.6143    0.6359            0.6359               0.7093    0.5862  26230.0
+3     0.6126    0.6158            0.6158               0.6839    0.5769  26051.0
+4     0.6207    0.6022            0.6022               0.6910    0.5914  25714.0
+5     0.6182    0.5859            0.5859               0.6513    0.6063  24550.0
+6     0.6291    0.6274            0.6274               0.7100    0.6377  24441.0
+7     0.6719    0.6600            0.6600               0.7379    0.6862  24317.0
+
+### Feature-group importance (valid, WAPE gốc 0.5918, 3 lần)
+       feature_group  valid_wape_permuted  delta_wape  delta_sd
+       history_sales               1.4963      0.9045    0.0048
+promo_schedule_depth               0.6232      0.0314    0.0019
+  dow_weekend_friday               0.6009      0.0091    0.0005
+          post_promo               0.5976      0.0058    0.0004
+static_store_product               0.5966      0.0048    0.0001
+           month_dom               0.5926      0.0008    0.0001
+             holiday               0.5920      0.0002    0.0004
+         price_level               0.5917     -0.0000    0.0004
+ regime_store4_pheic               0.5899     -0.0019    0.0002
+
+### Mô phỏng depth (ngày KM giảm giá trong test)
+  depth  category  n_days  pred_qty  pred_revenue  actual_qty  pred_qty_idx_vs_20pct  pred_revenue_idx_vs_20pct
+thực tế      food   10214  81366.09   16563880.00   105247.17                 101.22                     100.12
+thực tế household   14254  11592.17    2018247.50    15195.00                 102.48                      91.33
+   0.05      food   10214  75045.48   18245402.00   105247.17                  93.36                     110.28
+   0.05 household   14254  10757.57    2483758.75    15195.00                  95.11                     112.39
+    0.1      food   10214  76785.17   17717506.00   105247.17                  95.52                     107.09
+    0.1 household   14254  10940.86    2397081.75    15195.00                  96.73                     108.47
+   0.15      food   10214  78564.56   17150982.00   105247.17                  97.74                     103.67
+   0.15 household   14254  11125.43    2305820.25    15195.00                  98.36                     104.34
+    0.2      food   10214  80384.36   16544166.00   105247.17                 100.00                     100.00
+    0.2 household   14254  11311.24    2209910.50    15195.00                 100.00                     100.00
+   0.25      food   10214  82245.26   15895514.00   105247.17                 102.32                      96.08
+   0.25 household   14254  11498.34    2109291.50    15195.00                 101.65                      95.45
+    0.3      food   10214  84145.80   15202939.00   105247.17                 104.68                      91.89
+    0.3 household   14254  11686.76    2003921.88    15195.00                 103.32                      90.68
+   0.35      food   10214  86085.69   14464898.00   105247.17                 107.09                      87.43
+   0.35 household   14254  11876.49    1893735.88    15195.00                 105.00                      85.69
+    0.4      food   10214  88065.71   13679847.00   105247.17                 109.56                      82.69
+    0.4 household   14254  12067.64    1778716.50    15195.00                 106.69                      80.49
+
+Xong trong 139s. Kết quả ở D:\UIT-3.1\PTTK\projetc\output\lstm
