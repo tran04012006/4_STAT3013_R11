@@ -1,0 +1,69 @@
+xgboost 3.4.1
+(1197327, 56)
+             min        max   count
+split                              
+test  2024-07-01 2024-09-26  177713
+train 2022-08-28 2024-03-31  814951
+valid 2024-04-01 2024-06-30  204663
+
+Ngày bắt đầu có dữ liệu theo store:
+store_id
+1   2022-08-28
+2   2022-08-28
+3   2022-08-28
+4   2023-12-14
+Name: date, dtype: datetime64[ns]
+55 features | train 796327 | valid 204663 | loại warm-up: 18624
+Tỉ lệ NaN mức bán lịch sử (train / valid):
+       item_store_mean  item_mean  subclass_store_mean
+split                                                 
+train           0.0272     0.0177               0.0136
+valid           0.0135     0.0089               0.0002
+{'experiment': 'tweedie1.2_base', 'best_val_mse': 78.64561462402344, 'val_WAPE': 0.5481042265892029, 'best_iter': 122, 'sec': 36.1}
+{'experiment': 'tweedie1.4_base', 'best_val_mse': 78.9992446899414, 'val_WAPE': 0.5416523814201355, 'best_iter': 235, 'sec': 35.2}
+{'experiment': 'tweedie1.6_base', 'best_val_mse': 79.61758422851562, 'val_WAPE': 0.5422956943511963, 'best_iter': 215, 'sec': 32.2}
+{'experiment': 'mse_base', 'best_val_mse': 77.084716796875, 'val_WAPE': 0.5587934255599976, 'best_iter': 126, 'sec': 14.4}
+{'experiment': 'tweedie1.2_rs00', 'best_val_mse': 80.77716827392578, 'val_WAPE': 0.5474218726158142, 'best_iter': 166, 'sec': 41.1}
+{'experiment': 'tweedie1.2_rs01', 'best_val_mse': 82.1479721069336, 'val_WAPE': 0.5546531677246094, 'best_iter': 44, 'sec': 33.0}
+{'experiment': 'tweedie1.2_rs02', 'best_val_mse': 76.10597229003906, 'val_WAPE': 0.5401368141174316, 'best_iter': 596, 'sec': 73.4}
+{'experiment': 'tweedie1.2_rs03', 'best_val_mse': 77.19330596923828, 'val_WAPE': 0.5441925525665283, 'best_iter': 161, 'sec': 30.1}
+{'experiment': 'mse_rs04', 'best_val_mse': 76.27788543701172, 'val_WAPE': 0.5580345392227173, 'best_iter': 191, 'sec': 34.2}
+{'experiment': 'mse_rs05', 'best_val_mse': 77.35221099853516, 'val_WAPE': 0.5596868991851807, 'best_iter': 98, 'sec': 26.0}
+{'experiment': 'tweedie1.2_rs06', 'best_val_mse': 76.86382293701172, 'val_WAPE': 0.5418829917907715, 'best_iter': 354, 'sec': 48.1}
+{'experiment': 'tweedie1.2_rs07', 'best_val_mse': 79.22107696533203, 'val_WAPE': 0.5550475716590881, 'best_iter': 41, 'sec': 20.5}
+{'experiment': 'tweedie1.6_rs08', 'best_val_mse': 85.12055206298828, 'val_WAPE': 0.5503568649291992, 'best_iter': 58, 'sec': 34.6}
+{'experiment': 'tweedie1.2_rs09', 'best_val_mse': 81.23359680175781, 'val_WAPE': 0.5497389435768127, 'best_iter': 159, 'sec': 67.0}
+{'experiment': 'tweedie1.2_rs10', 'best_val_mse': 78.40341186523438, 'val_WAPE': 0.5477071404457092, 'best_iter': 122, 'sec': 38.8}
+{'experiment': 'tweedie1.6_rs11', 'best_val_mse': 78.6402359008789, 'val_WAPE': 0.5462646484375, 'best_iter': 210, 'sec': 40.3}
+{'experiment': 'tweedie1.2_rs12', 'best_val_mse': 81.2737808227539, 'val_WAPE': 0.5524842739105225, 'best_iter': 49, 'sec': 34.0}
+{'experiment': 'tweedie1.4_rs13', 'best_val_mse': 78.59315490722656, 'val_WAPE': 0.5431613326072693, 'best_iter': 212, 'sec': 46.5}
+{'experiment': 'tweedie1.4_rs14', 'best_val_mse': 80.568115234375, 'val_WAPE': 0.549448549747467, 'best_iter': 53, 'sec': 24.8}
+{'experiment': 'mse_rs15', 'best_val_mse': 76.45076751708984, 'val_WAPE': 0.5591753125190735, 'best_iter': 179, 'sec': 22.9}
+         experiment  best_val_mse  ...  reg_lambda     sec
+6   tweedie1.2_rs02       76.1060  ...      5.0000 73.4000
+8          mse_rs04       76.2779  ...      0.5000 34.2000
+19         mse_rs15       76.4508  ...      1.0000 22.9000
+10  tweedie1.2_rs06       76.8638  ...      1.0000 48.1000
+3          mse_base       77.0847  ...      1.0000 14.4000
+7   tweedie1.2_rs03       77.1933  ...      5.0000 30.1000
+9          mse_rs05       77.3522  ...      0.5000 26.0000
+14  tweedie1.2_rs10       78.4034  ...      0.5000 38.8000
+17  tweedie1.4_rs13       78.5932  ...      5.0000 46.5000
+15  tweedie1.6_rs11       78.6402  ...      5.0000 40.3000
+0   tweedie1.2_base       78.6456  ...      1.0000 36.1000
+1   tweedie1.4_base       78.9992  ...      1.0000 35.2000
+11  tweedie1.2_rs07       79.2211  ...      0.5000 20.5000
+2   tweedie1.6_base       79.6176  ...      1.0000 32.2000
+18  tweedie1.4_rs14       80.5681  ...      1.0000 24.8000
+4   tweedie1.2_rs00       80.7772  ...      0.5000 41.1000
+13  tweedie1.2_rs09       81.2336  ...      0.5000 67.0000
+16  tweedie1.2_rs12       81.2738  ...      0.5000 34.0000
+5   tweedie1.2_rs01       82.1480  ...      1.0000 33.0000
+12  tweedie1.6_rs08       85.1206  ...      5.0000 34.6000
+
+[20 rows x 14 columns]
+========== MODEL SELECTION ==========
+Selected experiment: tweedie1.2_rs02
+Expected Validation MSE: 76.10597229003906
+Checkpoint path: D:\UIT\PTTK\project\repo\4_STAT3013_R11\xgboost\outputs/checkpoints/tweedie1.2_rs02.json
+{'objective': 'reg:tweedie', 'tweedie_variance_power': 1.2, 'learning_rate': 0.03, 'max_depth': 6, 'min_child_weight': 5, 'subsample': 0.7, 'colsample_bytree': 1.0, 'reg_lambda': 5.0}

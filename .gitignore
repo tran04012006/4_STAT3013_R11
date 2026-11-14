@@ -1,0 +1,4 @@
+# Dữ liệu (đặt daily_panel.parquet vào data/, không commit)
+data/
+__pycache__/
+.ipynb_checkpoints/
