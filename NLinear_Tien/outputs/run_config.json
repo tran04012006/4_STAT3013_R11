@@ -1,0 +1,72 @@
+{
+  "best_config": {
+    "nlinear": {
+      "L": 56,
+      "loss": "mae_raw",
+      "epochs": 4,
+      "val_WAPE": 0.567477822303772
+    },
+    "nlinear_x": {
+      "L": 28,
+      "loss": "mae_raw",
+      "epochs": 6,
+      "val_WAPE": 0.5348225235939026
+    },
+    "nlinear_x_cal": {
+      "L": 28,
+      "loss": "mae_raw",
+      "epochs": 6,
+      "val_WAPE": 0.5348225235939026
+    }
+  },
+  "H": 7,
+  "seed": 42,
+  "max_epochs": 12,
+  "patience": 3,
+  "batch": 4096,
+  "lr": 0.002,
+  "features": [
+    "promo_on",
+    "promo_nodisc",
+    "depth",
+    "depth_sq",
+    "promo_first3",
+    "promo_last2",
+    "pre_promo_1_3",
+    "post_promo_1_3",
+    "post_promo_4_7",
+    "dow_0",
+    "dow_1",
+    "dow_2",
+    "dow_3",
+    "dow_4",
+    "dow_5",
+    "dow_6",
+    "is_holiday",
+    "pre_holiday",
+    "post_holiday",
+    "ny_break",
+    "minor_holiday",
+    "month_1",
+    "month_2",
+    "month_3",
+    "month_4",
+    "month_5",
+    "month_6",
+    "month_7",
+    "month_8",
+    "month_9",
+    "month_10",
+    "month_11",
+    "month_12",
+    "lookback_promo_share",
+    "last_day_promo"
+  ],
+  "n_series": 4063,
+  "n_test_predictions": 177713,
+  "n_panel_test_rows": 177713,
+  "runtime_sec": 244.5,
+  "torch": "2.15.0+cpu",
+  "numpy": "2.5.4",
+  "pandas": "2.3.3"
+}
