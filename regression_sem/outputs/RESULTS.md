@@ -1,256 +1,278 @@
 # Regression & SEM – kết quả (phần của Ngọc)
 
-Script: `regression_sem/regression_analysis.py`, `regression_sem/sem_analysis.py`. Dữ liệu: `data/daily_panel.parquet` (không commit).
-Log đầy đủ: `outputs/regression_log.txt`, `outputs/sem_log.txt`.
+**Thống nhất với EDA và pipeline chung của nhóm** (`bao_cao_pipeline_tien_xu_ly.md`):
 
-Đây là phân tích **giải thích** (inferential), không phải dự báo, nên dùng toàn bộ panel (train + valid + test, 2022-08-28 → 2024-09-26).
+- Dữ liệu kiểm định: `episodes.csv`, gồm 10,044 đợt KM thật và 9,700 đợt giả (placebo).
+- Cửa sổ trước KM là 1–3 ngày; sau KM gồm 1–3 ngày và 4–7 ngày.
+- Biến: `log_lift`, `log_post13`, `log_post47` = ln((x + 1/3) / (pre_qty + 1/3)).
+- **Luôn so sánh KM thật với đợt giả.** Sai số chuẩn dùng HC3 hoặc bootstrap; luôn báo cáo cỡ hiệu ứng và KTC 95%.
+- Theo EDA, các phân tích kiểm soát `store_id`, `category`, `promo_type` và seasonality.
 
-Chạy lại:
+Toàn bộ là phân tích **giải thích** nên dùng hết dữ liệu (không chia train/test).
+
+| Script | Dữ liệu | Nội dung |
+|---|---|---|
+| `regression_episodes.py` | `data/episodes.csv` | **A1 – Regression chính** (cấp đợt KM, theo EDA mục 4) |
+| `regression_analysis.py` | `data/daily_panel.parquet` | A2 – Regression bổ trợ (cấp ngày: Category, Store, Seasonality theo thứ/tháng) |
+| `sem_analysis.py` | `data/episodes.csv` | B – SEM + path diagram |
+
+Chạy lại (chép `daily_panel.parquet` và `episodes.csv` từ `data_model/` của pipeline vào `data/`):
 
 ```bash
-pip install pandas numpy scipy matplotlib pyarrow semopy
+pip install pandas numpy scipy statsmodels matplotlib pyarrow semopy
+python regression_sem/regression_episodes.py > regression_sem/outputs/regression_episodes_log.txt
 python regression_sem/regression_analysis.py > regression_sem/outputs/regression_log.txt
 python regression_sem/sem_analysis.py        > regression_sem/outputs/sem_log.txt      # ~10 phút (bootstrap 500 lần)
 ```
 
 ---
 
-## A. Regression: yếu tố nào liên quan đến lượng bán, mức độ liên hệ là bao nhiêu?
+## A. Regression: yếu tố nào liên quan đến lượng bán và mức độ liên hệ là bao nhiêu?
 
-### A.1. Thiết kế
+### A1. Hồi quy cấp đợt KM (chính) – Discount Depth, Category, Store, Seasonality → Sales Lift
 
-- **Biến phụ thuộc:** `y = ln(1 + quantity)`. Hệ số `b` được đọc là **% thay đổi lượng bán ≈ 100·(e^b − 1)**.
-- **4 nhóm yếu tố theo yêu cầu report:**
+EDA trang 9 đề xuất: *"sử dụng hồi quy để kiểm tra quan hệ giữa `depth` và `log_lift`, đồng thời kiểm soát `store_id`, `category`, `promo_type` và seasonality"*. EDA trang 10 đề xuất thêm: *"kiểm tra quan hệ `discount_depth × category`"*.
 
-| Nhóm | Biến trong mô hình |
-|---|---|
-| Discount Depth | phase KM (`pre_1_3`, `during`, `post_1_3`, `post_4_7`; gốc = ngày thường), `depth` (đơn vị +10 điểm %, căn giữa tại depth TB trong KM = 23.4%), tương tác với Household |
-| Category | Household (gốc = Food) |
-| Store | Store 2, 3, 4 (gốc = Store 1) |
-| Seasonality | ngày trong tuần (gốc = Thứ Hai), tháng (gốc = tháng 1), trước lễ / ngày lễ / sau lễ, nghỉ Tết (`ny_break`) |
-| Kiểm soát | năm (2023, 2024) |
+| Mô hình | Mẫu | Công thức (OLS, SE HC3) |
+|---|---|---|
+| **E1** | 10,044 đợt KM thật | `log_lift ~ depth + depth×category + category + store + promo_type + tháng + lễ + năm + ln(duration)` |
+| **E2** | 19,744 đợt (thật + giả) | `log_lift ~ promo × category + store + tháng + lễ + năm` → lift của KM **so với đối chứng** |
+| **E3** | 19,744 đợt (thật + giả) | `log_lift ~ (khoảng depth × category) + category + kiểm soát như E2` |
 
-- **3 mô hình:**
-  - **M1 – Pooled OLS:** có Category và Store → so sánh **giữa** các nhóm.
-  - **M2 – Fixed effects item×store (4,063 FE):** loại bỏ mức bán cố định của từng sản phẩm ở từng cửa hàng → ước lượng **sạch** cho Discount và Seasonality (Category/Store bị hấp thụ vào FE).
-  - **M3 – như M2, depth chia khoảng × Category:** xem hình dạng phi tuyến của hiệu ứng chiết khấu.
-- **Sai số chuẩn:** cluster-robust theo `item_id` (2,166 cluster). OLS tự tính bằng phương trình chuẩn để tiết kiệm RAM, đã đối chiếu với `statsmodels` (sai khác hệ số và SE < 1e-11).
-- **Effect size:** ΔR² khi bỏ cả khối biến, và partial η² = ΔR² / (1 − R²_full + ΔR²).
+- `depth` tính theo đơn vị +10 điểm %. Hệ số được đổi ra % thay đổi của lift: 100·(e^b − 1).
+- `promo_type` giữ 2 loại chính là 5 (63% số đợt) và 6 (31%); các loại còn lại gộp thành "khác".
+- **Không dùng thứ bắt đầu đợt** làm biến mùa vụ: KM gần như luôn bắt đầu từ Thứ 2 đến Thứ 5 (69% vào Thứ 5, chỉ 2 đợt vào Chủ nhật). Đây là thuộc tính lịch KM, và nó gần như trùng với biến KM thật/giả. Mùa vụ theo thứ được phân tích ở A2 (cấp ngày).
 
-N = 1,197,327 dòng (item × store × ngày).
+**Độ phù hợp:** E1 R² = 0.199, E2 R² = 0.181, E3 R² = 0.241.
 
-### A.2. Mức độ phù hợp
+#### Mức độ liên hệ (partial η²)
 
-| Mô hình | R² | within-R² |
+| Nhóm yếu tố (E1, đợt KM thật) | partial η² |
+|---|---:|
+| **Discount depth** (depth + depth × category) | **0.081** |
+| Store | 0.059 |
+| Category | 0.041 |
+| Promo type | 0.019 |
+| Độ dài đợt | 0.019 |
+| Seasonality (tháng + lễ) | 0.003 |
+| Năm | 0.000 |
+
+Ở E2 (KM thật vs đợt giả), riêng **việc có KM** đạt partial η² = **0.162**.
+
+→ Thứ tự mức độ liên hệ với lift: **KM / Discount depth > Store > Category > Promo type ≈ Độ dài ≫ Seasonality.**
+
+#### Hệ số (E1) – % thay đổi của lift, KTC 95% HC3
+
+![E1 coefficients](fig_reg_ep_coefs.png)
+
+| Yếu tố | % thay đổi lift | KTC 95% |
+|---|---:|---|
+| **+10 điểm % chiết khấu – Food** | **+30.8%** | [27.7; 33.9] |
+| **+10 điểm % chiết khấu – Household** | **+18.0%** | [15.5; 20.6] |
+| Chênh lệch độ dốc Household − Food (depth × category) | −9.8% | [−12.6; −6.9], p < 0.001 |
+| Household so với Food (tại depth = 0) | −14.8% | [−21.3; −7.7] |
+| Store 2 / 3 / 4 so với Store 1 | −21.1% / −51.6% / −14.1% | đều p < 0.001 |
+| Promo type 6 so với 5 | −13.9% | [−16.7; −11.0] |
+| Promo type khác so với 5 | +37.4% | [25.7; 50.1] |
+| ln(duration) +1 (đợt dài gấp ~2.7 lần) | +31.1% | [24.9; 37.7] |
+| Đợt chứa ngày lễ / đợt sau lễ | −8.2% / −33.7% | p = 0.02 / 0.004 |
+| Tháng bắt đầu (so với tháng 1) | chỉ tháng 12 có ý nghĩa: −10.5% | p = 0.03 |
+
+#### Có đối chứng đợt giả (E2, E3)
+
+| | Food | Household |
 |---|---:|---:|
-| M1 pooled OLS | 0.150 | – |
-| Chỉ FE item×store | 0.509 | – |
-| M2 FE + Discount + Seasonality | 0.545 | 0.073 |
-| M3 FE + depth bins × Category | – | 0.078 |
+| Trung vị lift, đợt KM thật | 1.85 | 1.71 |
+| Trung vị lift, đợt giả | 0.95 | 0.86 |
+| **Lift của KM so với đợt giả (E2)** | **+99.3%** [93.4; 105.4] | **+91.4%** [86.1; 96.9] |
 
-→ **Đặc tính riêng của từng sản phẩm × cửa hàng giải thích phần lớn biến động (R² ≈ 0.51).** Trong phạm vi một sản phẩm, khuyến mãi và mùa vụ giải thích thêm ~7% biến động theo ngày.
+Khác biệt Food − Household ở E2 **không có ý nghĩa** (−4.0%, p = 0.053). Ở mức depth trung bình của từng ngành, hai ngành tăng gần như nhau. Khác biệt nằm ở **độ nhạy với depth** (E1, E3).
 
-### A.3. Mức độ liên hệ của từng nhóm (effect size)
-
-![effect sizes](fig_reg_effect_sizes.png)
-
-| Nhóm yếu tố | partial η² (M1 pooled) | partial η² (M2 FE, within) |
-|---|---:|---:|
-| **Category** | **0.083** | (hấp thụ trong FE) |
-| **Discount / phase KM** | 0.038 | **0.067** |
-| Store | 0.021 | (hấp thụ trong FE) |
-| Seasonality (DOW + Tháng + Lễ) | 0.004 | 0.007 |
-| ├ Ngày trong tuần | 0.002 | 0.004 |
-| ├ Tháng | 0.001 | 0.001 |
-| └ Lễ / Tết | 0.001 | 0.001 |
-| Năm | 0.001 | 0.001 |
-
-- Thứ tự mức độ liên hệ: **Category > Discount > Store ≫ Seasonality**.
-- Trong cùng một sản phẩm (M2), **khuyến mãi là yếu tố mạnh nhất**, mạnh gấp ~10 lần mùa vụ.
-
-### A.4. Hệ số chi tiết
-
-![effects](fig_reg_effects.png)
-
-**Discount Depth / phase KM (M2, FE item×store)** – % thay đổi lượng bán so với ngày thường, KTC 95%:
-
-| Hệ số | Food | Household |
-|---|---:|---:|
-| Đang KM, tại depth trung bình (23.4%) | **+138.5%** [123.6; 154.3] | **+43.2%** (= 138.5% kết hợp −40.0% [−43.7; −36.0]) |
-| Mỗi +10 điểm % chiết khấu (trong KM) | **+21.4%** [16.2; 26.7] | **+7.3%** (chênh lệch −11.6% [−15.6; −7.3]) |
-| 1–3 ngày trước KM | +16.0% [12.9; 19.2] (gộp 2 ngành) | |
-| 1–3 ngày sau KM | +24.7% [20.1; 29.5] (gộp 2 ngành) | |
-| 4–7 ngày sau KM | +22.0% [17.8; 26.4] (gộp 2 ngành) | |
-
-**Hiệu ứng theo khoảng chiết khấu (M3)** – phi tuyến, rõ nhất ở Food:
-
-![depth bins](fig_reg_depth_bins.png)
+![E3 depth bins](fig_reg_ep_depth_bins.png)
 
 | Depth | Food | Household |
 |---|---:|---:|
-| < 10% | +80% [68; 93] | +24% [16; 33] |
-| 10–20% | +104% [92; 118] | +30% [25; 35] |
-| 20–30% | +134% [116; 153] | +35% [32; 39] |
-| 30–40% | +238% [197; 285] | +46% [41; 51] |
-| ≥ 40% | +288% [225; 363] | +59% [51; 67] |
-| 1–3 ngày trước KM | +28% [22; 34] | +2.4% [1.2; 3.6] |
-| 1–3 ngày sau KM | +49% [41; 58] | **−3.2%** [−4.5; −1.9] |
-| 4–7 ngày sau KM | +39% [32; 47] | +1.2% [−0.0; 2.4] |
+| < 10% | +50% [43; 57] | +37% [23; 51] |
+| 10–20% | +66% [60; 72] | +52% [44; 59] |
+| 20–30% | +123% [111; 135] | +82% [75; 89] |
+| 30–40% | +285% [251; 321] | +120% [111; 129] |
+| ≥ 40% | +392% [336; 457] | +156% [138; 174] |
 
-**Category & Store (M1, pooled):**
+*(% lift so với đợt giả cùng ngành hàng; số đợt trong từng ô: `reg_episode_depthbin_counts.csv`)*
 
-| Hệ số | % thay đổi | KTC 95% |
+### A2. Hồi quy cấp ngày (bổ trợ) – Category, Store, Seasonality
+
+`regression_analysis.py`, N = 1,197,327 dòng (item × store × ngày), biến phụ thuộc `ln(1 + quantity)`, sai số chuẩn cluster theo item.
+
+- **M1 – pooled OLS:** có Category và Store.
+- **M2 – fixed effects item × store:** loại bỏ mức bán cố định của từng sản phẩm ở từng cửa hàng, nên kiểm soát được **composition effect** của Store 4 mà EDA trang 3 đã chỉ ra.
+- **M3:** như M2 nhưng chia depth thành khoảng.
+
+![daily effects](fig_reg_effects.png)
+
+| Yếu tố | % thay đổi lượng bán/ngày | Ghi chú |
 |---|---:|---|
-| Household so với Food | **−46.6%** | [−50.8; −42.0] |
-| Store 2 so với Store 1 | −25.8% | [−29.6; −21.7] |
-| Store 3 so với Store 1 | −30.2% | [−36.0; −23.9] |
-| Store 4 so với Store 1 | +6.6% | [+3.0; +10.3] |
+| Household so với Food | −46.6% [−50.8; −42.0] | M1; partial η² = 0.083, lớn nhất |
+| Store 2 / 3 / 4 so với Store 1 | −25.8% / −30.2% / +6.6% | M1; partial η² = 0.021 |
+| Đang KM, Food / Household (depth TB 23%) | +138% / +43% | M2 |
+| **Thứ Sáu** so với Thứ Hai | **+13.8%** [12.8; 14.8] | M2; khớp EDA trang 11 |
+| Thứ Bảy / Thứ Năm so với Thứ Hai | +8.8% / +5.8% | Chủ nhật ≈ Thứ Hai |
+| Tháng 10–12 so với tháng 1 | +6.4% … +6.9% (p < 0.01) | Tháng 2–8 không khác có ý nghĩa |
+| Những ngày trước lễ / nghỉ Tết | +11.4% / −9.4% | |
 
-**Seasonality (M2):**
+Effect size theo ngày ([hình](fig_reg_effect_sizes.png)):
 
-| Hệ số | % thay đổi | KTC 95% |
-|---|---:|---|
-| Thứ Sáu vs Thứ Hai | **+13.8%** | [12.8; 14.8] |
-| Thứ Bảy vs Thứ Hai | +8.8% | [7.9; 9.8] |
-| Thứ Năm vs Thứ Hai | +5.8% | [5.2; 6.5] |
-| Chủ Nhật vs Thứ Hai | −0.1% (không ý nghĩa) | [−1.0; 0.8] |
-| Tháng 10 / 11 / 12 vs tháng 1 | +6.9% / +6.4% / +6.7% | p < 0.01 |
-| Tháng 2–8 vs tháng 1 | −1.6% … +0.6% (không ý nghĩa) | |
-| Những ngày trước lễ | **+11.4%** | [9.7; 13.1] |
-| Ngày lễ | −4.5% | [−5.9; −3.0] |
-| Nghỉ Tết (`ny_break`) | **−9.4%** | [−11.1; −7.6] |
+- Ở M1, Category (0.083) > Discount (0.038) > Store (0.021) ≫ Seasonality (0.004).
+- Ở M2 (trong cùng một sản phẩm), Discount (0.067) ≫ Seasonality (0.007).
 
-### A.5. Kết luận Regression
+### A3. Kết luận Regression
 
-1. **Discount Depth có liên hệ mạnh nhất trong phạm vi một sản phẩm.** Khi đang KM, lượng bán Food tăng ~2.4 lần (+138%), Household tăng +43%. Chiết khấu càng sâu, lượng bán càng tăng, và **tăng nhanh hơn tuyến tính** ở Food (≥ 30%: gần gấp 3.4–3.9 lần).
-2. **Category là yếu tố phân biệt mức bán lớn nhất giữa các sản phẩm** (partial η² = 0.083). Household bán ít hơn Food ~47% mỗi ngày và **phản ứng với KM yếu hơn nhiều** (đường cong depth thoải hơn).
-3. **Store:** Store 1 và 4 bán nhiều nhất, Store 2–3 thấp hơn 26–30%. Điều này khớp với format/quy mô cửa hàng.
-4. **Seasonality có ý nghĩa thống kê nhưng mức độ nhỏ** (partial η² < 0.01): đỉnh vào Thứ Sáu (+14%) và Thứ Bảy, quý 4 cao hơn ~7%, ngay trước lễ +11%, nghỉ Tết −9%.
-5. **Sau KM:** Food **không bị sụt** mà còn cao hơn ngày thường (+39–49%). Nguyên nhân có thể là hiệu ứng ghi nhớ (carry-over) hoặc KM rơi vào giai đoạn nhu cầu đang cao. Household có **dip nhỏ** (−3.2% trong 1–3 ngày sau KM), phù hợp với hành vi tích trữ hàng không dễ hỏng. Cơ chế này được phân tích tiếp bằng SEM ở phần B.
+1. **Discount depth là yếu tố liên hệ mạnh nhất với Sales Lift** (partial η² = 0.081; có KM so với đợt giả: 0.162).
+   - Mỗi +10 điểm % chiết khấu làm lift tăng +31% với Food và +18% với Household.
+   - Hiệu ứng **tăng nhanh hơn tuyến tính**: chiết khấu từ 40% trở lên cho Food +392%, Household +156% so với đợt giả.
+2. **Tương tác depth × category có ý nghĩa** (p < 0.001), đúng câu hỏi EDA trang 10 đặt ra. Household **có** phản ứng với depth (+18% / 10 điểm %, p < 0.001), nhưng yếu hơn Food.
+3. **Store** có liên hệ lớn thứ hai: lift ở Store 3 chỉ bằng khoảng một nửa Store 1. Ở cấp ngày, Store 2–3 bán ít hơn Store 1 từ 26–30%.
+4. **Category:**
+   - Theo ngày, Household bán ít hơn Food 47%.
+   - Tính tại mức depth trung bình của từng ngành, mức tăng do KM của hai ngành gần như nhau (+99% so với +91%).
+   - Khác biệt chính nằm ở **độ nhạy với mức giảm giá**.
+5. **Seasonality** có ý nghĩa thống kê nhưng nhỏ: đỉnh vào Thứ Sáu (+14%), quý 4 cao hơn khoảng 7%, những ngày trước lễ +11%. KM rơi vào kỳ lễ hoặc sau lễ có lift thấp hơn.
+6. **Promo type:** loại 6 cho lift thấp hơn loại 5 khoảng 14%.
 
-*Hạn chế:* depth không được gán ngẫu nhiên. Nhà bán lẻ có thể chọn KM vào lúc nhu cầu cao, nên hệ số mang tính **liên hệ**, chưa phải nhân quả. FE item×store đã loại bỏ được khác biệt cố định giữa các sản phẩm, nhưng chưa loại bỏ được cú sốc nhu cầu theo thời gian.
+*Hạn chế:* mức giảm do cửa hàng tự chọn, nên các hệ số là **liên hệ**, chưa phải nhân quả (pipeline, mục 8.6).
 
 ---
 
 ## B. SEM: chiết khấu, Sales Lift và Post-Promotion Dip liên hệ qua cơ chế nào?
 
-### B.1. Dữ liệu cho SEM: mỗi quan sát là một đợt khuyến mãi
+### B.1. Dữ liệu và biến
 
-Một **đợt KM** là chuỗi ngày liên tiếp `promo_status = 1` của một cặp item×store.
+`episodes.csv` gồm **10,044 đợt KM thật** (Food 5,808, Household 4,236) và **9,700 đợt giả** (Food 5,421, Household 4,279). Mọi biến đều lấy đúng định nghĩa của pipeline:
 
-| Bước lọc | Số đợt còn lại |
-|---|---:|
-| Tổng số đợt KM | 12,924 |
-| Độ dài 4–35 ngày (đợt rất dài, tới 604 ngày, thực chất là giá cố định) | 12,087 |
-| Đủ baseline: ≥ 6 ngày thường trong mỗi nửa của 28 ngày trước KM | 5,750 |
-| Có bán trong baseline (cả 2 nửa > 0) | 4,851 |
-| 7 ngày sau KM đủ dữ liệu, không có KM mới chen vào | **4,300** |
-
-→ **4,300 đợt** (Food 2,379, Household 1,921) của 891 sản phẩm.
-
-**Định nghĩa biến** (c = 0.1 để tránh chia cho 0; các chỉ báo được winsorize ở mức 1%–99%):
-
-| Biến | Định nghĩa |
+| Biến SEM | Định nghĩa |
 |---|---|
-| `DEPTH` | chiết khấu TB trong đợt, đơn vị 10 điểm % |
-| `SALES LIFT` (biến ẩn) | đo bằng 2 chỉ báo: `lift_early`, `lift_late` = ln((lượng bán TB nửa đầu / nửa sau đợt + c) / (baseline_A + c)) |
-| `POST-PROMO DIP` (biến ẩn) | đo bằng 2 chỉ báo: `dip_13`, `dip_47` = ln((baseline_B + c) / (lượng bán TB ngày +1…+3 / +4…+7 + c)). **DIP > 0 nghĩa là sau KM bán thấp hơn mức nền.** |
-| Biến kiểm soát | `FOOD` (1 = food), `DUR` = ln(số ngày KM), `BASE` = ln(baseline_A + c) (tốc độ bán nền) |
+| `DEPTH` | `depth`, đơn vị +10 điểm % (chỉ có ở đợt KM thật) |
+| `SALES LIFT` | `log_lift` = ln((during_qty + 1/3) / (pre_qty + 1/3)) |
+| `POST-PROMO DIP` (biến ẩn) | đo bằng 2 chỉ báo **−log_post13** và **−log_post47**. DIP > 0 nghĩa là sau KM bán thấp hơn trước KM |
+| Kiểm soát | `FOOD`, ln(duration), **ln(pre_qty + 1/3)**, cửa hàng (S2, S3, S4), promo_type (6, khác), lễ (`hol_status` ≠ normal) |
 
-**Vì sao chia baseline thành 2 nửa (ngày chẵn/lẻ trong 28 ngày trước KM)?** Nếu LIFT và DIP cùng chia cho một baseline, khi baseline thấp do ngẫu nhiên thì LIFT cao và DIP thấp cùng lúc. Điều đó tạo ra tương quan âm giả giữa LIFT và DIP. Dùng baseline_A cho LIFT và baseline_B cho DIP sẽ làm nhiễu của hai biến độc lập nhau. Mỗi nửa chứa đủ mỗi thứ trong tuần đúng 2 lần. Kiểm tra R1 bên dưới cho thấy dùng chung baseline làm hệ số `b` âm mạnh hơn (−0.62 so với −0.50), đúng như dự đoán.
-
-Thống kê mô tả (trung vị theo đợt):
-
-| | Food | Household |
-|---|---:|---:|
-| Depth | 15.9% | 26.3% |
-| Độ dài đợt | 7 ngày | 14 ngày |
-| Lift (lượng bán trong KM / baseline − 1) | +75% | +121% |
-| Lượng bán 7 ngày sau KM / baseline − 1 | **+2.6%** | **−12.4%** |
+**Vì sao phải kiểm soát ln(pre_qty + 1/3):** `log_lift` và `log_post` dùng **chung** cửa sổ pre chỉ 3 ngày.
+- LIFT = ln(during + c) − ln(pre + c) và DIP = ln(pre + c) − ln(post + c).
+- Khi pre thấp do ngẫu nhiên, LIFT bị đẩy lên còn DIP bị kéo xuống cùng lúc. Kết quả là một tương quan âm giả giữa hai biến.
+- Đưa ln(pre + c) vào cả phương trình LIFT và DIP sẽ triệt tiêu đúng thành phần chung này. Mục B.6 (R1) cho thấy nếu bỏ biến này, kết luận thay đổi hẳn.
 
 ### B.2. Mô hình
 
 ```
-Đo lường:  LIFT =~ lift_early + lift_late
-           DIP  =~ dip_13 + dip_47
-Cấu trúc:  DEPTH ~ FOOD + DUR + BASE
-           LIFT  ~ a·DEPTH + FOOD + DUR + BASE
-           DIP   ~ b·LIFT + c'·DEPTH + FOOD + DUR + BASE
+DIP   =~ dip13 + dip47                                  (dip13 = −log_post13, dip47 = −log_post47)
+DEPTH ~ FOOD + DUR + BASE + S2 + S3 + S4 + HOL + PT6 + PTO
+LIFT  ~ a·DEPTH + (các biến kiểm soát như trên)
+DIP   ~ b·LIFT + c'·DEPTH + (các biến kiểm soát như trên)
 ```
 
-- Ước lượng bằng `semopy` 2.3 (Maximum Likelihood, Wishart).
-- **Hiệu ứng gián tiếp** DEPTH → LIFT → DIP = a·b. **Tổng** = c' + a·b.
-- **KTC 95%:** cluster bootstrap theo `item_id`, 500 lần (500/500 lần hội tụ).
-- **Đa nhóm:** ước lượng riêng cho Food và Household, rồi so sánh bằng bootstrap.
+- Ước lượng bằng `semopy` 2.3 (ML, Wishart).
+- Hiệu ứng gián tiếp = a·b; hiệu ứng tổng = c' + a·b.
+- **KTC 95%:** cluster bootstrap theo `item_id`, 500 lần. Mỗi lần lấy mẫu lại item **một lần chung cho mọi mô hình**, nên các phép so sánh giữa nhóm có KTC đúng.
+- **Đa nhóm:** Food so với Household.
+- **Đối chứng:** cùng mô hình chạy trên **đợt giả** (không có DEPTH, PT). Theo đúng nguyên tắc "luôn so KM thật với đợt giả" của pipeline.
 
 ### B.3. SEM Path Diagram
 
 ![SEM path diagram](fig_sem_path_diagram.png)
 
-Path diagram riêng cho từng ngành hàng: [Food](fig_sem_path_food.png), [Household](fig_sem_path_household.png).
+Path diagram riêng: [Food](fig_sem_path_food.png), [Household](fig_sem_path_household.png).
 
-**Chỉ số phù hợp:**
+| Mô hình | N | χ² (df) | p | CFI | TLI | RMSEA |
+|---|---:|---|---:|---:|---:|---:|
+| KM thật – gộp | 10,044 | 177.2 (55) | < 0.001 | 0.996 | 0.994 | 0.015 |
+| KM thật – Food | 5,808 | 72.2 (45) | 0.006 | 0.998 | 0.997 | 0.010 |
+| KM thật – Household | 4,236 | 20.3 (45) | 1.00 | 1.000 | 1.006 | 0.000 |
+| Đợt giả – gộp | 9,700 | 18.3 (27) | 0.89 | 1.000 | 1.001 | 0.000 |
 
-| Mô hình | N | χ² (df) | p | CFI | TLI | RMSEA | GFI |
-|---|---:|---|---:|---:|---:|---:|---:|
-| Gộp | 4,300 | 53.8 (15) | < 0.001 | 0.996 | 0.992 | 0.025 | 0.995 |
-| Food | 2,379 | 45.6 (10) | < 0.001 | 0.993 | 0.984 | 0.039 | 0.991 |
-| Household | 1,921 | 6.2 (10) | 0.80 | 1.000 | 1.005 | 0.000 | 0.997 |
+→ Mô hình **phù hợp rất tốt** (CFI > 0.99, RMSEA < 0.02). Factor loading chuẩn hóa của 2 chỉ báo DIP nằm trong khoảng 0.75–0.89 (p < 0.001).
 
-→ Mô hình **phù hợp tốt**: CFI > 0.95, RMSEA < 0.06. χ² có ý nghĩa ở mẫu gộp là điều bình thường khi N lớn. Các factor loading chuẩn hóa nằm trong khoảng 0.49–0.91 (đều p < 0.001), nên 2 chỉ báo đo tốt cùng một biến ẩn.
+### B.4. Hiệu ứng trực tiếp, gián tiếp, tổng (đợt KM thật)
 
-### B.4. Hiệu ứng trực tiếp và gián tiếp
-
-Hệ số **chuẩn hóa** (KTC 95% bootstrap):
+Hệ số **chuẩn hóa**, KTC 95% bootstrap:
 
 | Đường dẫn | Gộp | Food | Household |
 |---|---:|---:|---:|
-| a: Depth → Lift | **0.32** [0.26; 0.37] | 0.39 [0.30; 0.47] | 0.16 [0.09; 0.23] |
-| b: Lift → Dip | **−0.48** [−0.54; −0.42] | −0.65 [−0.71; −0.59] | −0.23 [−0.34; −0.11] |
-| c': Depth → Dip (trực tiếp) | **+0.20** [0.16; 0.25] | +0.25 [0.19; 0.32] | +0.16 [0.08; 0.23] |
-| a·b: Depth → Lift → Dip (gián tiếp) | **−0.15** [−0.19; −0.12] | −0.26 [−0.32; −0.19] | −0.04 [−0.06; −0.01] |
-| Tổng: Depth → Dip | +0.05 [0.005; 0.09] | −0.00 [−0.06; 0.06] | **+0.13** [0.05; 0.19] |
+| a: Depth → Lift | 0.22 [0.19; 0.25] | 0.24 [0.19; 0.28] | 0.13 [0.08; 0.17] |
+| b: Lift → Dip | −0.59 [−0.62; −0.56] | −0.66 [−0.69; −0.62] | −0.38 [−0.43; −0.33] |
+| c': Depth → Dip (trực tiếp) | 0.25 [0.21; 0.28] | 0.25 [0.20; 0.29] | 0.23 [0.19; 0.27] |
+| a·b: gián tiếp qua Lift | −0.13 [−0.15; −0.11] | −0.16 [−0.19; −0.13] | −0.05 [−0.06; −0.03] |
+| **Tổng: Depth → Dip** | **0.11** [0.08; 0.14] | **0.09** [0.05; 0.13] | **0.18** [0.15; 0.22] |
 
-Hệ số **chưa chuẩn hóa** đổi ra %, đơn vị +10 điểm % chiết khấu:
+Hệ số **chưa chuẩn hóa** đổi ra %, cho mỗi +10 điểm % chiết khấu:
 
-| | Food | Household | Khác biệt Food − Household (KTC 95%) |
+| | Food | Household | Khác biệt Food − Household |
 |---|---|---|---|
-| a | lượng bán trong KM **+37%** | +12% | 0.20 [0.11; 0.28] |
-| c' (giữ LIFT không đổi) | lượng bán sau KM **−19%** | −10% | 0.10 [0.03; 0.17] |
-| a·b | sau KM +23% | +2% | −0.19 [−0.23; −0.14] |
-| **Tổng** | **≈ 0%** [−5%; +5%] | **−8%** [−3%; −12%] | −0.08 [−0.15; −0.01] |
+| a: lift trong KM | +23.9% [18.8; 29.3] | +9.0% [5.5; 12.5] | có ý nghĩa (p_boot < 0.004) |
+| c': lượng bán sau KM, khi giữ Lift không đổi | −17.7% [−15.0; −20.3] | −11.0% [−9.2; −13.0] | có ý nghĩa |
+| a·b: lượng bán sau KM, qua Lift | +13.4% | +2.5% | có ý nghĩa |
+| **Tổng: lượng bán sau KM so với trước KM** | **−6.8%** [−3.8; −9.7] | **−8.8%** [−7.0; −10.8] | **không có ý nghĩa** (p = 0.24) |
 
 ![group comparison](fig_sem_group_comparison.png)
 
-### B.5. Các yếu tố liên hệ với nhau qua cơ chế nào?
+### B.5. Đối chứng đợt giả: đường Lift → Dip
 
-Kết quả là **trung gian cạnh tranh (competitive mediation)**: chiết khấu tác động lên Post-Promotion Dip theo **hai đường ngược chiều**.
+![placebo b](fig_sem_placebo_b.png)
 
-1. **Đường trực tiếp c' > 0: kéo cầu về trước / tích trữ (pull-forward, stockpiling).** So sánh hai đợt có cùng mức Lift, đợt chiết khấu sâu hơn bị sụt sau KM nhiều hơn. Lý do: một phần lượng mua trong KM là **mua sớm** cho nhu cầu tương lai, nên sau KM khách hàng mua ít đi.
-2. **Đường gián tiếp a·b < 0: lan tỏa / duy trì (carry-over).**
-   - a > 0: chiết khấu sâu hơn làm Lift lớn hơn.
-   - b < 0: đợt có Lift lớn **không** bị sụt mạnh hơn; ngược lại, lượng bán sau KM vẫn ở mức cao. Lift lớn phản ánh nhu cầu thực sự mở rộng (khách mới dùng thử, sản phẩm được trưng bày nổi bật hơn) hoặc sản phẩm đang trong giai đoạn nhu cầu cao.
-3. **Ngành hàng quyết định đường nào thắng thế** (khác biệt đa nhóm đều có ý nghĩa, p < 0.05):
-   - **Food** (đồ tươi, dễ hỏng, khó tích trữ): hai đường gần như **triệt tiêu nhau**. Hiệu ứng tổng của chiết khấu lên Dip ≈ 0, nên KM Food **không gây sụt sau KM**. Kết quả này khớp với Regression: sau KM, Food vẫn bán cao hơn ngày thường.
-   - **Household** (hàng dễ tích trữ): Lift tăng ít theo depth (a nhỏ) và gần như không có carry-over (b nhỏ), nên **đường tích trữ trực tiếp chiếm ưu thế**. Mỗi +10 điểm % chiết khấu làm lượng bán 7 ngày sau KM **giảm thêm ~8%** so với mức nền. Đây chính là post-promotion dip, khớp với hệ số −3.2% ở Regression M3.
+| b (chưa chuẩn hóa) | KM thật | Đợt giả | KM thật − đợt giả |
+|---|---:|---:|---:|
+| Gộp | −0.51 [−0.55; −0.47] | −0.89 [−0.93; −0.85] | +0.39 [0.33; 0.43] |
+| Food | −0.59 [−0.63; −0.54] | −0.97 [−1.01; −0.93] | +0.39 [0.32; 0.44] |
+| Household | −0.28 [−0.32; −0.24] | −0.75 [−0.79; −0.69] | +0.46 [0.40; 0.52] |
 
-**Hàm ý:** chiết khấu sâu cho Household phần lớn chỉ dời doanh số về sớm hơn, phải trả giá bằng dip sau KM. Với Food, chiết khấu sâu tạo ra mức tăng lớn mà không bị "trả lại" sau KM.
+- **Ngay cả khi không có KM, b vẫn âm mạnh (khoảng −0.9).** Đã kiểm soát mức pre, nên b đo việc lượng bán "during" cao đi kèm lượng bán "sau" cũng cao. Đây là **quán tính tự nhiên của nhu cầu**: sản phẩm đang bán chạy thì tuần sau vẫn bán chạy.
+- Ở đợt KM thật, b yếu hơn hẳn (−0.51). Lift **do KM tạo ra** không được duy trì sang sau KM như biến động nhu cầu tự nhiên. Household có b gần 0 nhất (−0.28): phần tăng do KM của Household gần như không kéo dài sang sau KM.
 
-### B.6. Kiểm tra độ vững (robustness)
+### B.6. Kiểm tra độ vững
 
-| Mô hình | a | b | c' | a·b | Tổng |
+| Mô hình (hệ số chuẩn hóa, KM thật – gộp) | a | b | c' | a·b | Tổng |
 |---|---:|---:|---:|---:|---:|
-| Chính (baseline chia đôi, biến ẩn) | 0.32 | −0.48 | 0.20 | −0.15 | 0.05 |
-| R1: dùng chung một baseline | 0.34 | −0.63 | 0.30 | −0.22 | 0.08 |
-| R2: path analysis với biến quan sát (TB 2 chỉ báo, không có biến ẩn) | 0.30 | −0.35 | 0.14 | −0.10 | 0.04 |
+| **Chính** | 0.22 | −0.59 | 0.25 | −0.13 | **0.11** |
+| R1: bỏ kiểm soát ln(pre_qty) | 0.30 | −0.72 | 0.23 | −0.22 | **0.02** |
+| R2: DIP là biến quan sát (trung bình 2 chỉ báo) | 0.22 | −0.54 | 0.22 | −0.12 | 0.10 |
 
-*(hệ số chuẩn hóa, mẫu gộp)*
+- **R1:** nếu không kiểm soát mức pre, tương quan giả do dùng chung baseline làm b âm mạnh hơn và **xóa mất hiệu ứng tổng** (0.11 → 0.02). Điều này cho thấy việc kiểm soát ln(pre_qty) là cần thiết.
+- **R2:** bỏ biến ẩn thì kết quả gần như không đổi.
 
-- Dấu và mức ý nghĩa của mọi đường dẫn **giữ nguyên** trong cả 3 cách ước lượng.
-- R1 phóng đại b, đúng như dự đoán về tương quan giả do dùng chung baseline.
-- R2 cho hệ số nhỏ hơn vì sai số đo lường làm suy giảm hệ số (attenuation). Đây là lý do nên dùng biến ẩn.
+### B.7. Các yếu tố liên hệ với nhau qua cơ chế nào?
 
-### B.7. Hạn chế
+1. **Chiết khấu sâu hơn làm tăng Post-Promotion Dip** (hiệu ứng tổng dương, có ý nghĩa ở cả 2 ngành). Mỗi +10 điểm % chiết khấu làm lượng bán 7 ngày sau KM giảm thêm khoảng **7% so với trước KM** (Food −6.8%, Household −8.8%; khác biệt giữa hai ngành không có ý nghĩa).
+2. **Cơ chế chính là kéo cầu về trước / tích trữ (đường trực tiếp c' > 0).** So sánh hai đợt có cùng mức Lift, đợt giảm sâu hơn bị sụt sau KM nhiều hơn. Lý do: khách mua trước cho nhu cầu tương lai, nên sau KM họ mua ít đi.
+3. **Đường gián tiếp qua Lift (a·b < 0) chủ yếu phản ánh quán tính nhu cầu, không phải hiệu ứng lan tỏa của KM.**
+   - Đợt giả cho thấy Lift → Dip âm mạnh ngay cả khi không có KM (b ≈ −0.9).
+   - Ở KM thật, b yếu hơn đáng kể, nghĩa là phần lift do KM tạo ra **không duy trì** sau khi KM kết thúc.
+4. **Khác biệt Food / Household:**
+   - Food: phản ứng với depth mạnh hơn (a lớn gấp ~2.5 lần) và có cả hai đường lớn. Đường gián tiếp bù lại một phần đường trực tiếp.
+   - Household: Lift tăng ít theo depth, và phần lift do KM gần như không duy trì (b ≈ −0.28). Đường trực tiếp (tích trữ) chiếm ưu thế: hiệu ứng tổng chuẩn hóa 0.18, gấp đôi Food (0.09).
+   - Đây đúng là giả thuyết EDA trang 7: *"household dùng lâu nên mua trong KM rồi thì sau KM không cần mua nữa"*.
 
-- Mẫu SEM chỉ gồm các đợt KM có baseline "sạch" (4,300 / 12,924 đợt). Các sản phẩm được KM liên tục hoặc bán rất thưa bị loại. Vì thế mức Lift và Dip trong mẫu SEM khác với hệ số Regression (vốn tính trên mọi ngày, theo thang ln(1 + q)).
-- Hệ số b < 0 có thể một phần do **cú sốc nhu cầu chung**: một sản phẩm đang "hot" vừa có Lift cao vừa bán tốt sau KM. Dữ liệu quan sát không tách được hoàn toàn yếu tố này khỏi carry-over thật sự. SEM ở đây chỉ ra **cấu trúc liên hệ** phù hợp với dữ liệu, chưa phải bằng chứng nhân quả.
+*Hạn chế:* pre chỉ có 3 ngày nên nhiễu lớn (28% đợt KM có pre_qty = 0). Đợt giả chưa được ghép cặp với đợt thật theo mùa vụ (pipeline, mục 8.4). SEM chỉ ra **cấu trúc liên hệ** phù hợp với dữ liệu, chưa phải bằng chứng nhân quả.
+
+---
+
+## C. Đối chiếu với EDA
+
+| Nhận xét trong EDA | Kết quả kiểm định | Thống nhất? |
+|---|---|---|
+| Store 4 vào giữa chừng → composition effect, cần kiểm soát cửa hàng (trang 3) | Store được kiểm soát ở mọi mô hình. Có fixed effects item×store ở A2 | ✔ (lưu ý: Store 4 bắt đầu **14/12/2023**, không phải 1/2024) |
+| Trong KM bán nhiều nhất (trang 4) | KM so với đợt giả: lift +99% (Food), +91% (Household), p < 0.001 | ✔ |
+| After 4–7 = 0.87 → Post-Promotion Dip (trang 5) | Đợt giả **không có KM** cũng có tỉ lệ 0.75 (gộp). Food sau KM (0.97) **cao hơn** đợt giả (0.86); chỉ Household (0.62) thấp hơn đợt giả (0.75) | ✘ Không thể kết luận dip từ tỉ lệ thô. Phải so với đợt giả, như chính EDA trang 7 đề xuất |
+| Trong KM Food tăng nhiều hơn Household (trang 6) | Tại depth TB của từng ngành, +99% so với +91%, **không khác có ý nghĩa** (p = 0.053). Food chỉ nhạy hơn **theo depth** | ~ Cần nói rõ hơn |
+| Sau KM Household giảm mạnh hơn Food (trang 7) | So với đợt giả: đúng. Tác động của depth lên Dip: Household 0.18 so với Food 0.09 (chuẩn hóa) | ✔ |
+| Lift của Food tăng theo depth (trang 9) | +30.8% lift cho mỗi +10 điểm % (E1) | ✔ |
+| **"Household không thể hiện mối liên hệ rõ ràng"** (trang 10) | Household: **+18.0% lift cho mỗi +10 điểm %**, p < 0.001; từ +37% (depth < 10%) lên +156% (≥ 40%) | ✘ Nên sửa: "có liên hệ dương nhưng yếu hơn Food" |
+| Thứ Sáu bán cao nhất (trang 11) | +13.8% so với Thứ Hai (A2) | ✔ |
+| Tháng 8 thấp nhất, tháng 12 cao nhất (trang 12) | Sau khi kiểm soát: tháng 10–12 cao hơn khoảng +7%; tháng 6–8 không khác tháng 1 có ý nghĩa. Biểu đồ EDA **thiếu tháng 1–3** và dính composition effect của Store 4 | ~ Hướng đúng, mức độ bị phóng đại |
+
+Median ratio kiểu EDA, tính từ `episodes.csv` (chỉ các đợt có pre_qty > 0):
+
+| | During | After 1–3 | After 4–7 |
+|---|---:|---:|---:|
+| KM thật – Food | 1.85 | 1.13 | 0.97 |
+| Đợt giả – Food | 0.95 | 0.90 | 0.86 |
+| KM thật – Household | 1.71 | **0.50** | **0.62** |
+| Đợt giả – Household | 0.86 | 0.75 | 0.75 |

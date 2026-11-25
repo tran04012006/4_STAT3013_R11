@@ -1,0 +1,6 @@
+# Dữ liệu (đặt daily_panel.parquet và episodes.csv vào data/, không commit)
+data/
+__pycache__/
+.ipynb_checkpoints/
+# Tài liệu nội bộ của nhóm (report, EDA dạng PDF)
+no commit/
