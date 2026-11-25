@@ -1,0 +1,127 @@
+(1197327, 17) | số item: 2166 | số cặp item×store: 4063
+Depth trung bình trong KM: 0.2344
+
+M1 pooled OLS: R² = 0.1496, N = 1,197,327, clusters = 2166
+               term    coef     se      p  pct_coef
+              const  1.0052 0.0494 0.0000  173.2473
+      phase_pre_1_3  0.0385 0.0264 0.1451    3.9207
+       phase_during  0.8091 0.0522 0.0000  124.5873
+     phase_post_1_3  0.1540 0.0328 0.0000   16.6512
+     phase_post_4_7  0.1293 0.0320 0.0001   13.8087
+          depth10_c  0.0749 0.0361 0.0381    7.7828
+ during_x_household -0.6640 0.0557 0.0000  -48.5207
+depth10_x_household -0.0868 0.0396 0.0282   -8.3177
+          household -0.6266 0.0421 0.0000  -46.5577
+            store_2 -0.2980 0.0271 0.0000  -25.7664
+            store_3 -0.3595 0.0443 0.0000  -30.2003
+            store_4  0.0638 0.0173 0.0002    6.5867
+            dow_Fri  0.1216 0.0048 0.0000   12.9329
+            dow_Sat  0.0782 0.0049 0.0000    8.1300
+            dow_Sun -0.0050 0.0045 0.2670   -0.5029
+            dow_Thu  0.0510 0.0036 0.0000    5.2306
+            dow_Tue  0.0045 0.0026 0.0860    0.4470
+            dow_Wed  0.0187 0.0020 0.0000    1.8857
+           month_02  0.0017 0.0095 0.8586    0.1688
+           month_03 -0.0008 0.0131 0.9544   -0.0751
+           month_04  0.0056 0.0148 0.7052    0.5632
+           month_05  0.0011 0.0185 0.9516    0.1125
+           month_06 -0.0112 0.0229 0.6252   -1.1150
+           month_07 -0.0024 0.0257 0.9264   -0.2374
+           month_08  0.0195 0.0260 0.4526    1.9727
+           month_09  0.0827 0.0258 0.0014    8.6269
+           month_10  0.0647 0.0246 0.0085    6.6814
+           month_11  0.0566 0.0187 0.0025    5.8192
+           month_12  0.0649 0.0151 0.0000    6.7023
+            hol_pre  0.1031 0.0080 0.0000   10.8620
+            hol_day -0.0485 0.0081 0.0000   -4.7317
+           hol_post  0.0026 0.0055 0.6391    0.2579
+           ny_break -0.1101 0.0106 0.0000  -10.4230
+          year_2023 -0.0353 0.0158 0.0259   -3.4665
+          year_2024  0.0264 0.0219 0.2278    2.6723
+
+M2 FE item×store: within-R² = 0.0734, overall R² (kèm FE) = 0.5449, số FE = 4063
+               term    coef     se      p  pct_coef
+      phase_pre_1_3  0.1488 0.0139 0.0000   16.0419
+       phase_during  0.8690 0.0328 0.0000  138.4571
+     phase_post_1_3  0.2206 0.0193 0.0000   24.6876
+     phase_post_4_7  0.1990 0.0180 0.0000   22.0161
+          depth10_c  0.1936 0.0221 0.0000   21.3590
+ during_x_household -0.5100 0.0329 0.0000  -39.9523
+depth10_x_household -0.1229 0.0238 0.0000  -11.5665
+            dow_Fri  0.1290 0.0044 0.0000   13.7736
+            dow_Sat  0.0847 0.0047 0.0000    8.8356
+            dow_Sun -0.0010 0.0044 0.8209   -0.0998
+            dow_Thu  0.0568 0.0033 0.0000    5.8440
+            dow_Tue  0.0047 0.0026 0.0685    0.4739
+            dow_Wed  0.0179 0.0020 0.0000    1.8047
+           month_02  0.0020 0.0088 0.8228    0.1984
+           month_03 -0.0049 0.0121 0.6874   -0.4870
+           month_04  0.0059 0.0139 0.6743    0.5872
+           month_05  0.0007 0.0176 0.9669    0.0732
+           month_06 -0.0148 0.0224 0.5093   -1.4644
+           month_07 -0.0163 0.0251 0.5145   -1.6211
+           month_08 -0.0052 0.0250 0.8346   -0.5204
+           month_09  0.0463 0.0248 0.0626    4.7368
+           month_10  0.0670 0.0240 0.0053    6.9286
+           month_11  0.0619 0.0179 0.0006    6.3867
+           month_12  0.0651 0.0144 0.0000    6.7291
+            hol_pre  0.1079 0.0078 0.0000   11.3974
+            hol_day -0.0458 0.0078 0.0000   -4.4756
+           hol_post  0.0030 0.0052 0.5580    0.3053
+           ny_break -0.0983 0.0101 0.0000   -9.3634
+          year_2023 -0.0182 0.0140 0.1932   -1.8070
+          year_2024  0.0306 0.0193 0.1129    3.1072
+R² chỉ với fixed effects item×store: 0.5088
+
+M3 depth bins × category (FE): within-R² = 0.0775
+                    term   coef    p  pct_coef  pct_ci_low  pct_ci_high
+       during[<10%]|food  0.589 0.00    80.297      68.384       93.053
+     during[10–20%]|food  0.714 0.00   104.241      91.565      117.756
+     during[20–30%]|food  0.848 0.00   133.602     115.965      152.679
+     during[30–40%]|food  1.217 0.00   237.812     196.547      284.819
+       during[≥40%]|food  1.357 0.00   288.358     225.424      363.464
+      phase_pre_1_3|food  0.246 0.00    27.948      22.160       34.010
+     phase_post_1_3|food  0.401 0.00    49.300      40.717       58.406
+     phase_post_4_7|food  0.330 0.00    39.093      31.530       47.090
+  during[<10%]|household  0.218 0.00    24.330      16.436       32.760
+during[10–20%]|household  0.260 0.00    29.736      25.141       34.501
+during[20–30%]|household  0.303 0.00    35.448      32.230       38.745
+during[30–40%]|household  0.378 0.00    45.931      41.097       50.931
+  during[≥40%]|household  0.462 0.00    58.688      50.853       66.929
+ phase_pre_1_3|household  0.023 0.00     2.368       1.178        3.572
+phase_post_1_3|household -0.033 0.00    -3.210      -4.466       -1.937
+phase_post_4_7|household  0.012 0.06     1.164      -0.047        2.390
+Số dòng theo khoảng depth:
+category   food  household
+depth                     
+<10%      13791       2799
+10–20%    31051      13362
+20–30%    15843      24897
+30–40%     9408      21783
+≥40%       5429       9153
+
+Effect sizes:
+                    model                           block  n_terms  R2_full  delta_R2  partial_eta2
+                M1_pooled                        Discount        7   0.1496    0.0332        0.0376
+                M1_pooled                        Category        1   0.1496    0.0769        0.0829
+                M1_pooled                           Store        3   0.1496    0.0186        0.0214
+                M1_pooled                             DOW        6   0.1496    0.0017        0.0020
+                M1_pooled                           Month       11   0.1496    0.0006        0.0008
+                M1_pooled                         Holiday        4   0.1496    0.0005        0.0006
+                M1_pooled                            Year        2   0.1496    0.0006        0.0007
+                M1_pooled Seasonality (DOW+Month+Holiday)       21   0.1496    0.0031        0.0036
+M2_FE_item_store (within)                        Discount        7   0.0734    0.0665        0.0670
+M2_FE_item_store (within)                             DOW        6   0.0734    0.0039        0.0042
+M2_FE_item_store (within)                           Month       11   0.0734    0.0010        0.0010
+M2_FE_item_store (within)                         Holiday        4   0.0734    0.0010        0.0010
+M2_FE_item_store (within)                            Year        2   0.0734    0.0006        0.0006
+M2_FE_item_store (within) Seasonality (DOW+Month+Holiday)       21   0.0734    0.0062        0.0067
+
+Fit:
+               model       N    k     R2  within_R2
+           M1_pooled 1197327   35 0.1496        NaN
+    M2_FE_item_store 1197327   30 0.5449     0.0734
+     M3_FE_depthbins 1197327   39    NaN     0.0775
+FE_only (item×store) 1197327 4063 0.5088        NaN
+
+Đã lưu bảng và hình vào D:\UIT\PTTK\project\repo\4_STAT3013_R11\regression_sem\outputs

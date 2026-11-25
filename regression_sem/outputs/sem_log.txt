@@ -1,0 +1,139 @@
+Tổng số đợt KM: 12924
+                                     bước  số đợt còn lại
+                           Tổng số đợt KM           12924
+                         Độ dài 4–35 ngày           12087
+     Đủ baseline (≥6 ngày thường mỗi nửa)            5750
+     Có bán trong baseline (cả 2 nửa > 0)            4851
+7 ngày sau KM đủ dữ liệu, không có KM mới            4300
+
+Số đợt dùng cho SEM: 4300 (food 2379, household 1921), 891 item
+           depth  n_days    lift_pct  post_pct
+category                                      
+food       0.159     7.0   75.125999     2.621
+household  0.263    14.0  121.331001   -12.358
+
+Tương quan giữa các biến:
+            DEPTH   FOOD    DUR   BASE  lift_early  lift_late  dip_13  dip_47
+DEPTH       1.000 -0.321  0.300 -0.367       0.331      0.320   0.086   0.047
+FOOD       -0.321  1.000 -0.470  0.581      -0.037     -0.055  -0.187  -0.120
+DUR         0.300 -0.470  1.000 -0.445       0.204      0.222   0.128   0.072
+BASE       -0.367  0.581 -0.445  1.000      -0.261     -0.270  -0.044  -0.003
+lift_early  0.331 -0.037  0.204 -0.261       1.000      0.710  -0.194  -0.185
+lift_late   0.320 -0.055  0.222 -0.270       0.710      1.000  -0.258  -0.247
+dip_13      0.086 -0.187  0.128 -0.044      -0.194     -0.258   1.000   0.510
+dip_47      0.047 -0.120  0.072 -0.003      -0.185     -0.247   0.510   1.000
+
+===== Full (pooled) (N = 4300, bootstrap thành công 500/500) =====
+      lval op  rval  Estimate  Est. Std  Std. Err   p-value
+     DEPTH  ~  FOOD   -0.2655   -0.1178  0.040283       0.0
+     DEPTH  ~   DUR    0.4167    0.1397  0.048452       0.0
+     DEPTH  ~  BASE   -0.2004   -0.2364  0.014928       0.0
+      LIFT  ~ DEPTH    0.2279    0.3187  0.012147       0.0
+      LIFT  ~  FOOD    0.4727    0.2933  0.031756       0.0
+      LIFT  ~   DUR    0.3507    0.1645  0.037738       0.0
+      LIFT  ~  BASE   -0.1776   -0.2932  0.011951       0.0
+       DIP  ~  LIFT   -0.4955   -0.4840  0.024182       0.0
+       DIP  ~ DEPTH    0.1499    0.2047  0.014668       0.0
+       DIP  ~  FOOD   -0.2027   -0.1228   0.03765       0.0
+       DIP  ~   DUR    0.3535    0.1619  0.044442       0.0
+       DIP  ~  BASE    0.0168    0.0271  0.014125  0.233238
+lift_early  ~  LIFT    1.0000    0.8124         -         -
+ lift_late  ~  LIFT    1.1509    0.8745  0.027373       0.0
+    dip_13  ~   DIP    1.0000    0.7834         -         -
+    dip_47  ~   DIP    0.7801    0.6513  0.036484       0.0
+
+===== Food (N = 2379, bootstrap thành công 500/500) =====
+      lval op  rval  Estimate  Est. Std  Std. Err   p-value
+     DEPTH  ~   DUR    0.6914    0.2591  0.053879       0.0
+     DEPTH  ~  BASE   -0.1265   -0.1525   0.01675       0.0
+      LIFT  ~ DEPTH    0.3149    0.3914  0.017102       0.0
+      LIFT  ~   DUR    0.2533    0.1179  0.044374       0.0
+      LIFT  ~  BASE   -0.1271   -0.1904  0.013608       0.0
+       DIP  ~  LIFT   -0.6635   -0.6533  0.030213       0.0
+       DIP  ~ DEPTH    0.2068    0.2531  0.020182       0.0
+       DIP  ~   DUR    0.3766    0.1727    0.0494       0.0
+       DIP  ~  BASE    0.0295    0.0434  0.015199  0.052642
+lift_early  ~  LIFT    1.0000    0.8310         -         -
+ lift_late  ~  LIFT    1.1972    0.9122  0.029323       0.0
+    dip_13  ~   DIP    1.0000    0.8318         -         -
+    dip_47  ~   DIP    0.8670    0.7483  0.036873       0.0
+
+===== Household (N = 1921, bootstrap thành công 500/500) =====
+      lval op  rval  Estimate  Est. Std  Std. Err   p-value
+     DEPTH  ~   DUR   -0.4248   -0.0890  0.104383  0.000047
+     DEPTH  ~  BASE   -0.3895   -0.2744  0.031066       0.0
+      LIFT  ~ DEPTH    0.1130    0.1597   0.01745       0.0
+      LIFT  ~   DUR    0.5615    0.1663  0.080321       0.0
+      LIFT  ~  BASE   -0.3900   -0.3882  0.025956       0.0
+       DIP  ~  LIFT   -0.2057   -0.2250  0.040118       0.0
+       DIP  ~ DEPTH    0.1046    0.1617  0.022034  0.000002
+       DIP  ~   DUR    0.3349    0.1085   0.09955  0.000767
+       DIP  ~  BASE   -0.0171   -0.0186  0.032891  0.603637
+lift_early  ~  LIFT    1.0000    0.8081         -         -
+ lift_late  ~  LIFT    1.0009    0.7830  0.048864       0.0
+    dip_13  ~   DIP    1.0000    0.6799         -         -
+    dip_47  ~   DIP    0.6631    0.4861  0.146094  0.000006
+
+===== R1: shared baseline (N = 4300, bootstrap thành công 500/500) =====
+         lval op    rval  Estimate  Est. Std  Std. Err p-value
+        DEPTH  ~    FOOD   -0.2494   -0.1106  0.040364     0.0
+        DEPTH  ~     DUR    0.4071    0.1365  0.048462     0.0
+        DEPTH  ~ BASE_sh   -0.2151   -0.2481  0.015372     0.0
+         LIFT  ~   DEPTH    0.2363    0.3442  0.011834     0.0
+         LIFT  ~    FOOD    0.4345    0.2808  0.030777     0.0
+         LIFT  ~     DUR    0.3735    0.1824  0.036712     0.0
+         LIFT  ~ BASE_sh   -0.1349   -0.2265  0.011843     0.0
+          DIP  ~    LIFT   -0.6154   -0.6271  0.024102     0.0
+          DIP  ~   DEPTH    0.1998    0.2966   0.01364     0.0
+          DIP  ~    FOOD   -0.2237   -0.1473  0.034171     0.0
+          DIP  ~     DUR    0.4476    0.2228  0.040737     0.0
+          DIP  ~ BASE_sh    0.0744    0.1274  0.013048     0.0
+lift_early_sh  ~    LIFT    1.0000    0.8015         -       -
+ lift_late_sh  ~    LIFT    1.1638    0.8693  0.026463     0.0
+    dip_13_sh  ~     DIP    1.0000    0.7383         -       -
+    dip_47_sh  ~     DIP    0.8206    0.6520  0.031545     0.0
+
+===== Hiệu ứng (KTC 95% cluster bootstrap) =====
+                  model      effect  estimate  std_estimate  boot_se  ci_low  ci_high  std_ci_low  std_ci_high  p_boot  n_boot
+          Full (pooled)           a    0.2279        0.3187   0.0256  0.1774   0.2740      0.2564       0.3716   0.000   500.0
+          Full (pooled)           b   -0.4955       -0.4840   0.0369 -0.5720  -0.4248     -0.5437      -0.4211   0.000   500.0
+          Full (pooled)    c_direct    0.1499        0.2047   0.0182  0.1151   0.1861      0.1570       0.2487   0.000   500.0
+          Full (pooled) indirect_ab   -0.1129       -0.1543   0.0134 -0.1403  -0.0866     -0.1904      -0.1176   0.000   500.0
+          Full (pooled)       total    0.0370        0.0505   0.0174  0.0034   0.0692      0.0046       0.0935   0.040   500.0
+                   Food           a    0.3149        0.3914   0.0359  0.2419   0.3834      0.3006       0.4702   0.000   500.0
+                   Food           b   -0.6635       -0.6533   0.0473 -0.7628  -0.5791     -0.7125      -0.5894   0.000   500.0
+                   Food    c_direct    0.2068        0.2531   0.0256  0.1584   0.2569      0.1873       0.3174   0.000   500.0
+                   Food indirect_ab   -0.2089       -0.2557   0.0238 -0.2526  -0.1650     -0.3152      -0.1925   0.000   500.0
+                   Food       total   -0.0021       -0.0026   0.0242 -0.0520   0.0470     -0.0647       0.0561   0.948   500.0
+              Household           a    0.1130        0.1597   0.0265  0.0651   0.1624      0.0931       0.2259   0.000   500.0
+              Household           b   -0.2057       -0.2250   0.0510 -0.3047  -0.1140     -0.3409      -0.1117   0.000   500.0
+              Household    c_direct    0.1046        0.1617   0.0262  0.0536   0.1513      0.0829       0.2306   0.000   500.0
+              Household indirect_ab   -0.0232       -0.0359   0.0083 -0.0424  -0.0099     -0.0609      -0.0144   0.000   500.0
+              Household       total    0.0814        0.1258   0.0249  0.0325   0.1272      0.0500       0.1939   0.000   500.0
+    R1: shared baseline           a    0.2363        0.3442   0.0249  0.1886   0.2809      0.2826       0.3956   0.000   500.0
+    R1: shared baseline           b   -0.6154       -0.6271   0.0358 -0.6878  -0.5499     -0.6798      -0.5712   0.000   500.0
+    R1: shared baseline    c_direct    0.1998        0.2966   0.0176  0.1655   0.2328      0.2448       0.3429   0.000   500.0
+    R1: shared baseline indirect_ab   -0.1454       -0.2159   0.0151 -0.1744  -0.1148     -0.2579      -0.1714   0.000   500.0
+    R1: shared baseline       total    0.0544        0.0807   0.0171  0.0197   0.0864      0.0294       0.1260   0.000   500.0
+R2: observed path model           a    0.2484        0.2950      NaN     NaN      NaN         NaN          NaN     NaN     NaN
+R2: observed path model           b   -0.3229       -0.3455      NaN     NaN      NaN         NaN          NaN     NaN     NaN
+R2: observed path model    c_direct    0.1120        0.1423      NaN     NaN      NaN         NaN          NaN     NaN     NaN
+R2: observed path model indirect_ab   -0.0802       -0.1019      NaN     NaN      NaN         NaN          NaN     NaN     NaN
+R2: observed path model       total    0.0317        0.0403      NaN     NaN      NaN         NaN          NaN     NaN     NaN
+
+===== Chỉ số phù hợp =====
+              model    N  DoF    chi2  chi2 p-value    CFI    TLI  RMSEA    GFI   AGFI     AIC      BIC
+      Full (pooled) 4300 15.0 53.8445        0.0000 0.9961 0.9919 0.0245 0.9946 0.9888 41.9750 175.6687
+               Food 2379 10.0 45.5591        0.0000 0.9929 0.9836 0.0387 0.9909 0.9791 35.9617 139.9015
+          Household 1921 10.0  6.1937        0.7987 1.0021 1.0049 0.0000 0.9966 0.9922 35.9936 136.0844
+R1: shared baseline 4300 15.0 49.6083        0.0000 0.9965 0.9928 0.0232 0.9951 0.9898 41.9769 175.6707
+
+===== Khác biệt Food − Household =====
+     effect    food  household  diff_food_minus_household  ci_low  ci_high  p_boot
+          a  0.3149     0.1130                     0.2019  0.1096   0.2800   0.000
+          b -0.6635    -0.2057                    -0.4578 -0.5958  -0.3211   0.000
+   c_direct  0.2068     0.1046                     0.1022  0.0344   0.1732   0.000
+indirect_ab -0.2089    -0.0232                    -0.1857 -0.2300  -0.1381   0.000
+      total -0.0021     0.0814                    -0.0835 -0.1465  -0.0092   0.036
+
+Đã lưu bảng và hình vào D:\UIT\PTTK\project\repo\4_STAT3013_R11\regression_sem\outputs

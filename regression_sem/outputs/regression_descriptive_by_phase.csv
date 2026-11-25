@@ -1,0 +1,11 @@
+category,phase,mean,median,count
+food,during,12.194099,4.174,75522
+food,other,6.315118,0.966,514186
+food,post_1_3,8.952125,2.295,20298
+food,post_4_7,7.6415725,2.0,26274
+food,pre_1_3,5.861201,1.7135,15918
+household,during,1.2639664,1.0,71994
+household,other,1.0480906,0.0,424719
+household,post_1_3,0.47494802,0.0,14909
+household,post_4_7,0.43331945,0.0,19196
+household,pre_1_3,0.43693662,0.0,14311
