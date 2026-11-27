@@ -1,0 +1,93 @@
+{
+  "selected": {
+    "L": 28,
+    "loss": "mae_raw",
+    "epochs": 6,
+    "valid_WAPE": 0.5347978472709656
+  },
+  "H": 7,
+  "stride": 7,
+  "seed": 42,
+  "lr": 0.002,
+  "batch_size": 4096,
+  "max_epochs": 12,
+  "patience": 3,
+  "min_delta": 1e-05,
+  "L_grid": [
+    14,
+    28,
+    56
+  ],
+  "loss_grid": [
+    "mae_raw",
+    "mse_scaled"
+  ],
+  "prior_days": 28,
+  "train_end": "2024-03-31",
+  "valid": [
+    "2024-04-01",
+    "2024-06-30"
+  ],
+  "test": [
+    "2024-07-01",
+    "2024-09-26"
+  ],
+  "exo_features": [
+    "promo_on",
+    "promo_nodisc",
+    "depth",
+    "depth_sq",
+    "promo_first3",
+    "promo_last2",
+    "pre_promo_1_3",
+    "post_promo_1_3",
+    "post_promo_4_7",
+    "dow_0",
+    "dow_1",
+    "dow_2",
+    "dow_3",
+    "dow_4",
+    "dow_5",
+    "dow_6",
+    "is_holiday",
+    "pre_holiday",
+    "post_holiday",
+    "ny_break",
+    "minor_holiday",
+    "month_1",
+    "month_2",
+    "month_3",
+    "month_4",
+    "month_5",
+    "month_6",
+    "month_7",
+    "month_8",
+    "month_9",
+    "month_10",
+    "month_11",
+    "month_12",
+    "lookback_promo_share",
+    "last_day_promo"
+  ],
+  "groups": [
+    "F1",
+    "F2",
+    "H1",
+    "H2"
+  ],
+  "n_series": 4063,
+  "n_days": 761,
+  "n_test_rows": 177713,
+  "negative_clip": "applied to forecasts only (not inside the training loss)",
+  "versions": {
+    "python": "3.14.7",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "numpy": "2.5.4",
+    "pandas": "2.3.3",
+    "pyarrow": "26.0.1",
+    "scipy": "1.18.1",
+    "torch": "2.15.0+cpu",
+    "matplotlib": "3.11.2"
+  },
+  "runtime_seconds": 104.7
+}

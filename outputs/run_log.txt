@@ -1,0 +1,132 @@
+[    0.0s] Python 3.14.7 | torch 2.15.0+cpu | threads 8
+[    1.7s] Data: 1,197,327 rows, S=4063, D=761 (2022-08-28 -> 2024-09-26)
+[    4.6s] [tune] L=14 loss=mae_raw samples=754,748 end=2024-03-31
+[    6.6s] [tune] epoch  1 train_loss=2.60957 valid_WAPE=0.54053
+[    8.3s] [tune] epoch  2 train_loss=2.37061 valid_WAPE=0.53654
+[   10.1s] [tune] epoch  3 train_loss=2.36082 valid_WAPE=0.53609
+[   11.9s] [tune] epoch  4 train_loss=2.35963 valid_WAPE=0.53489
+[   13.6s] [tune] epoch  5 train_loss=2.35918 valid_WAPE=0.53586
+[   15.5s] [tune] epoch  6 train_loss=2.35888 valid_WAPE=0.53595
+[   17.2s] [tune] epoch  7 train_loss=2.35881 valid_WAPE=0.53533
+[   17.2s] [tune] early stop after epoch 7
+[   17.2s]   -> L=14 mae_raw: best valid WAPE 0.53489 at epoch 4
+[   17.3s] [tune] L=14 loss=mse_scaled samples=754,748 end=2024-03-31
+[   19.1s] [tune] epoch  1 train_loss=1.99123 valid_WAPE=0.58362
+[   20.9s] [tune] epoch  2 train_loss=1.90634 valid_WAPE=0.57081
+[   22.8s] [tune] epoch  3 train_loss=1.89095 valid_WAPE=0.56951
+[   24.8s] [tune] epoch  4 train_loss=1.88514 valid_WAPE=0.57017
+[   26.7s] [tune] epoch  5 train_loss=1.88226 valid_WAPE=0.57124
+[   28.5s] [tune] epoch  6 train_loss=1.88054 valid_WAPE=0.57322
+[   28.5s] [tune] early stop after epoch 6
+[   28.5s]   -> L=14 mse_scaled: best valid WAPE 0.56951 at epoch 3
+[   28.5s] [tune] L=28 loss=mae_raw samples=716,028 end=2024-03-31
+[   30.3s] [tune] epoch  1 train_loss=2.64950 valid_WAPE=0.54318
+[   32.1s] [tune] epoch  2 train_loss=2.35524 valid_WAPE=0.53703
+[   33.8s] [tune] epoch  3 train_loss=2.34046 valid_WAPE=0.53536
+[   35.6s] [tune] epoch  4 train_loss=2.33855 valid_WAPE=0.53601
+[   37.4s] [tune] epoch  5 train_loss=2.33858 valid_WAPE=0.53682
+[   39.2s] [tune] epoch  6 train_loss=2.33811 valid_WAPE=0.53480
+[   41.0s] [tune] epoch  7 train_loss=2.33774 valid_WAPE=0.53507
+[   42.8s] [tune] epoch  8 train_loss=2.33807 valid_WAPE=0.53541
+[   44.6s] [tune] epoch  9 train_loss=2.33820 valid_WAPE=0.53543
+[   44.6s] [tune] early stop after epoch 9
+[   44.6s]   -> L=28 mae_raw: best valid WAPE 0.53480 at epoch 6
+[   44.6s] [tune] L=28 loss=mse_scaled samples=716,028 end=2024-03-31
+[   46.5s] [tune] epoch  1 train_loss=1.84508 valid_WAPE=0.58511
+[   48.2s] [tune] epoch  2 train_loss=1.73900 valid_WAPE=0.57075
+[   50.1s] [tune] epoch  3 train_loss=1.72515 valid_WAPE=0.56297
+[   51.9s] [tune] epoch  4 train_loss=1.72094 valid_WAPE=0.56968
+[   53.7s] [tune] epoch  5 train_loss=1.71853 valid_WAPE=0.57113
+[   55.5s] [tune] epoch  6 train_loss=1.71725 valid_WAPE=0.57168
+[   55.5s] [tune] early stop after epoch 6
+[   55.5s]   -> L=28 mse_scaled: best valid WAPE 0.56297 at epoch 3
+[   55.6s] [tune] L=56 loss=mae_raw samples=643,925 end=2024-03-31
+[   57.3s] [tune] epoch  1 train_loss=2.67955 valid_WAPE=0.54337
+[   59.0s] [tune] epoch  2 train_loss=2.33302 valid_WAPE=0.53651
+[   60.8s] [tune] epoch  3 train_loss=2.31533 valid_WAPE=0.53603
+[   62.6s] [tune] epoch  4 train_loss=2.31352 valid_WAPE=0.53602
+[   64.3s] [tune] epoch  5 train_loss=2.31236 valid_WAPE=0.53576
+[   66.1s] [tune] epoch  6 train_loss=2.31208 valid_WAPE=0.53774
+[   67.9s] [tune] epoch  7 train_loss=2.31337 valid_WAPE=0.53652
+[   69.7s] [tune] epoch  8 train_loss=2.31207 valid_WAPE=0.53629
+[   69.7s] [tune] early stop after epoch 8
+[   69.7s]   -> L=56 mae_raw: best valid WAPE 0.53576 at epoch 5
+[   69.7s] [tune] L=56 loss=mse_scaled samples=643,925 end=2024-03-31
+[   71.5s] [tune] epoch  1 train_loss=1.92240 valid_WAPE=0.59196
+[   73.2s] [tune] epoch  2 train_loss=1.80824 valid_WAPE=0.57349
+[   75.1s] [tune] epoch  3 train_loss=1.78754 valid_WAPE=0.58013
+[   77.4s] [tune] epoch  4 train_loss=1.78067 valid_WAPE=0.56816
+[   79.8s] [tune] epoch  5 train_loss=1.77651 valid_WAPE=0.57574
+[   81.9s] [tune] epoch  6 train_loss=1.77619 valid_WAPE=0.57226
+[   84.4s] [tune] epoch  7 train_loss=1.77546 valid_WAPE=0.57246
+[   84.4s] [tune] early stop after epoch 7
+[   84.4s]   -> L=56 mse_scaled: best valid WAPE 0.56816 at epoch 4
+[   84.5s] Selected: L=28, loss=mae_raw, epochs=6, valid WAPE=0.53480
+[   84.5s] [final] L=28 loss=mae_raw samples=908,667 end=2024-06-30
+[   87.5s] [final] epoch  1 train_loss=2.58706
+[   90.7s] [final] epoch  2 train_loss=2.34680
+[   94.0s] [final] epoch  3 train_loss=2.34012
+[   96.5s] [final] epoch  4 train_loss=2.33922
+[   98.8s] [final] epoch  5 train_loss=2.33917
+[  101.1s] [final] epoch  6 train_loss=2.33952
+[  101.6s] Test: 177,713 rows (expected 177,713), origins=13, duplicates=0, rows missing from panel test split=0, panel test rows not forecast=0
+[  104.1s] Overall test metrics:
+subset          model      n      MAE      RMSE     WAPE      Bias
+   ALL seasonal_naive 177713 3.116984 14.676821 0.696587  0.004395
+   ALL      nlinear_x 177713 2.524046 11.781071 0.564077 -0.109339
+[  104.1s] By category WAPE:
+model      nlinear_x  seasonal_naive
+category                            
+food        0.532597        0.653967
+household   0.799014        1.014664
+[  104.2s] By group4 WAPE:
+model   nlinear_x  seasonal_naive
+group4                           
+F1       0.544086        0.656957
+F2       0.504405        0.646632
+H1       0.769128        0.978625
+H2       1.062071        1.331873
+[  104.2s] By phase WAPE:
+model     nlinear_x  seasonal_naive
+phase                              
+during     0.548070        0.659104
+other      0.563085        0.678469
+post_1_3   0.595694        0.898825
+post_4_7   0.584949        1.069996
+pre_1_3    0.666833        0.824634
+[  104.3s] By horizon WAPE:
+model         nlinear_x  seasonal_naive
+horizon_step                           
+1              0.533812        0.696712
+2              0.543101        0.709004
+3              0.541917        0.684330
+4              0.544407        0.691376
+5              0.568782        0.652488
+6              0.595854        0.712121
+7              0.621875        0.740988
+[  104.3s] Bottom-up:
+                level subset          model    n        MAE       RMSE     WAPE      Bias
+group4 x store x date     F1 seasonal_naive  352 187.970372 308.529975 0.132806  0.010736
+group4 x store x date     F1      nlinear_x  352 196.560943 306.837566 0.138876 -0.089764
+group4 x store x date     F2 seasonal_naive  352  48.963888  75.260476 0.084890 -0.002585
+group4 x store x date     F2      nlinear_x  352  64.913583 101.764426 0.112542 -0.095604
+group4 x store x date     H1 seasonal_naive  352  33.025172  48.909058 0.137776 -0.013335
+group4 x store x date     H1      nlinear_x  352  56.880536  80.088019 0.237297 -0.227792
+group4 x store x date     H2 seasonal_naive  351   6.178443  11.041162 0.226229 -0.021267
+group4 x store x date     H2      nlinear_x  351  10.601142  16.988889 0.388170 -0.375000
+group4 x store x date    ALL seasonal_naive 1407  69.079142 160.812009 0.122226  0.004395
+group4 x store x date    ALL      nlinear_x 1407  82.289966 166.797948 0.145600 -0.109339
+[  104.3s] Diebold-Mariano:
+   subset   model_A        model_B  H  T       mean_d       hac_var         DM        HLN      p_value
+      ALL nlinear_x seasonal_naive  7 88 -1197.418432 294845.403836 -20.686647 -19.158295 5.773722e-33
+     food nlinear_x seasonal_naive  7 88  -967.160889 261129.046486 -17.754665 -16.442931 1.987958e-28
+household nlinear_x seasonal_naive  7 88  -230.257542   6213.289228 -27.402767 -25.378221 5.559970e-42
+[  104.3s] Episodes in test: 1126
+   subset          model  n_episodes  sum_mean_actual  sum_mean_pred  capture_ratio  episode_WAPE
+      ALL seasonal_naive        1126      7821.975418    5855.669378       0.748618      0.365228
+      ALL      nlinear_x        1126      7821.975418    7211.031865       0.921894      0.281484
+     food seasonal_naive         572      7258.533594    5474.349942       0.754195      0.365132
+     food      nlinear_x         572      7258.533594    6823.985186       0.940133      0.274341
+household seasonal_naive         554       563.441824     381.319436       0.676768      0.366468
+household      nlinear_x         554       563.441824     387.046679       0.686933      0.373504
+[  104.7s] Done in 104.7s
