@@ -177,27 +177,27 @@ for i, (cat, col, name) in enumerate([('food', C_FOOD, 'Food'), ('household', C_
         ax.text(xv, h + 5, f'{val:.0f}%', ha='center', fontsize=8, color=INK)
         ax.text(xv, -14, f'n={n}', ha='center', fontsize=6.8, color=INK2)
 ax.axhline(0, color=INK2, lw=0.8)
-ax.set_xticks(x, BIN_LABELS); ax.tick_params(axis='x', pad=14); ax.set_xlabel('Mức chiết khấu (depth)')
-ax.set_ylabel('% lift so với đợt giả cùng ngành hàng')
+ax.set_xticks(x, BIN_LABELS); ax.tick_params(axis='x', pad=14); ax.set_xlabel('Discount depth')
+ax.set_ylabel('% lift vs placebo episodes of the same category')
 ax.yaxis.grid(True, color=GRID, lw=0.6); ax.set_axisbelow(True)
 ax.legend(frameon=False, loc='upper left')
-ax.set_title('Discount depth vs Sales lift – có đối chứng đợt giả (E3, KTC 95% HC3)', loc='left',
+ax.set_title('Discount depth vs sales lift, net of placebo (E3, 95% CI, HC3)', loc='left',
              fontsize=10.5, fontweight='bold', color=INK)
 fig.tight_layout(); fig.savefig(OUT / 'fig_reg_ep_depth_bins.png'); plt.close(fig)
 
 # Hình 2: hệ số E1 (% thay đổi lift)
-items = [('depth10', '+10đ% chiết khấu – Food', C_FOOD),
-         ('depth10 (household = depth10 + depth10:household)', '+10đ% chiết khấu – Household', C_HH),
-         ('household', 'Household vs Food (tại depth = 0)', C_HH),
+items = [('depth10', '+10 pp discount – Food', C_FOOD),
+         ('depth10 (household = depth10 + depth10:household)', '+10 pp discount – Household', C_HH),
+         ('household', 'Household vs Food (at depth = 0)', C_HH),
          ("C(store, Treatment('1'))[T.2]", 'Store 2 vs Store 1', NEU),
          ("C(store, Treatment('1'))[T.3]", 'Store 3 vs Store 1', NEU),
          ("C(store, Treatment('1'))[T.4]", 'Store 4 vs Store 1', NEU),
          ("C(ptype, Treatment('5'))[T.6]", 'Promo type 6 vs 5', NEU),
-         ("C(ptype, Treatment('5'))[T.other]", 'Promo type khác vs 5', NEU),
-         ('log_dur', 'Độ dài đợt ×2.7 (ln duration +1)', NEU),
-         ("C(hol, Treatment('normal'))[T.holiday]", 'Đợt chứa ngày lễ', NEU),
-         ("C(hol, Treatment('normal'))[T.pre_holiday]", 'Đợt trước lễ', NEU),
-         ("C(hol, Treatment('normal'))[T.post_holiday]", 'Đợt sau lễ', NEU)]
+         ("C(ptype, Treatment('5'))[T.other]", 'Other promo types vs 5', NEU),
+         ('log_dur', 'Duration ×2.7 (ln duration +1)', NEU),
+         ("C(hol, Treatment('normal'))[T.holiday]", 'Episode contains a holiday', NEU),
+         ("C(hol, Treatment('normal'))[T.pre_holiday]", 'Pre-holiday episode', NEU),
+         ("C(hol, Treatment('normal'))[T.post_holiday]", 'Post-holiday episode', NEU)]
 fig, ax = plt.subplots(figsize=(8.4, 5.6))
 yy = np.arange(len(items))[::-1]
 vals = []; los = []; his = []
@@ -211,9 +211,9 @@ for v_, y_, h in zip(vals, yy, his):
     ax.text(max(h, 0) + 0.02 * span, y_, f'{v_:+.1f}%', va='center', fontsize=8.5, color=INK)
 ax.set_xlim(min(los.min(), 0) - 0.03 * span, his.max() + 0.2 * span)
 ax.axvline(0, color=INK2, lw=0.8); ax.set_yticks(yy, [l for _, l, _ in items])
-ax.set_xlabel('% thay đổi của lift (KTC 95%, HC3)')
+ax.set_xlabel('% change in lift (95% CI, HC3)')
 ax.xaxis.grid(True, color=GRID, lw=0.6); ax.set_axisbelow(True)
-ax.set_title('Các yếu tố liên quan đến Sales Lift (E1, đợt KM thật)', loc='left',
+ax.set_title('Factors associated with sales lift (E1, promotion episodes)', loc='left',
              fontsize=10.5, fontweight='bold', color=INK)
 fig.tight_layout(); fig.savefig(OUT / 'fig_reg_ep_coefs.png'); plt.close(fig)
 print('\nĐã lưu bảng và hình vào', OUT)

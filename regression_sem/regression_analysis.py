@@ -237,12 +237,12 @@ def hbar_ci(ax, labels, vals, lo, hi, colors, title):
 # Hình 1: tổng quan 4 nhóm yếu tố (Discount & Seasonality từ M2; Category & Store từ M1)
 fig, axes = plt.subplots(2, 2, figsize=(11, 7.4))
 NEU = '#8a8986'
-items = [('phase_during', 'Đang KM (Food, depth TB)'), ('during_x_household', '+ chênh lệch Household'),
-         ('depth10_c', '+10 điểm % chiết khấu (Food)'), ('depth10_x_household', '+ chênh lệch Household / +10đ%'),
-         ('phase_pre_1_3', '1–3 ngày trước KM'), ('phase_post_1_3', '1–3 ngày sau KM'), ('phase_post_4_7', '4–7 ngày sau KM')]
+items = [('phase_during', 'During promo (Food, mean depth)'), ('during_x_household', '+ Household difference'),
+         ('depth10_c', '+10 pp discount (Food)'), ('depth10_x_household', '+ Household difference per +10 pp'),
+         ('phase_pre_1_3', '1–3 days before promo'), ('phase_post_1_3', '1–3 days after promo'), ('phase_post_4_7', '4–7 days after promo')]
 v = [coef_row(m2, t) for t, _ in items]
 hbar_ci(axes[0, 0], [l for _, l in items], [a for a, _, _ in v], [b for _, b, _ in v], [c for _, _, c in v],
-        [C_FOOD, C_HH, C_FOOD, C_HH, NEU, NEU, NEU], 'Discount / Phase KM (M2, FE item×store)')
+        [C_FOOD, C_HH, C_FOOD, C_HH, NEU, NEU, NEU], 'Discount / promotion phase (M2, item×store FE)')
 items = [('household', 'Household vs Food')]
 items_s = [('store_2', 'Store 2 vs Store 1'), ('store_3', 'Store 3 vs Store 1'), ('store_4', 'Store 4 vs Store 1')]
 v = [coef_row(m1, t) for t, _ in items + items_s]
@@ -251,7 +251,7 @@ hbar_ci(axes[0, 1], [l for _, l in items + items_s], [a for a, _, _ in v], [b fo
 dows = [f'dow_{d}' for d in DOW_NAMES[1:]]
 v = [coef_row(m2, t) for t in dows]
 hbar_ci(axes[1, 0], [f'{d} vs Mon' for d in DOW_NAMES[1:]], [a for a, _, _ in v], [b for _, b, _ in v],
-        [c for _, _, c in v], [NEU] * 6, 'Seasonality – ngày trong tuần (M2)')
+        [c for _, _, c in v], [NEU] * 6, 'Seasonality – day of week (M2)')
 mon_terms = [f'month_{m:02d}' for m in range(2, 13)]
 v = [coef_row(m2, t) for t in mon_terms]
 ax = axes[1, 1]
@@ -260,12 +260,12 @@ pct = [0] + [a for a, _, _ in v]; lo = [0] + [b for _, b, _ in v]; hi = [0] + [c
 ax.fill_between(mm, lo, hi, color=NEU, alpha=0.18, lw=0)
 ax.plot(mm, pct, color=INK2, lw=2, marker='o', ms=5, markeredgecolor='white', markeredgewidth=1.5)
 ax.axhline(0, color=INK2, lw=0.8)
-ax.set_xticks(mm, ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'])
-ax.set_ylabel('% so với tháng 1'); ax.yaxis.grid(True, color=GRID, lw=0.6); ax.set_axisbelow(True)
-ax.set_title('Seasonality – tháng (M2, KTC 95%)', loc='left', fontsize=10.5, color=INK, fontweight='bold')
+ax.set_xticks(mm, ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], rotation=45)
+ax.set_ylabel('% vs January'); ax.yaxis.grid(True, color=GRID, lw=0.6); ax.set_axisbelow(True)
+ax.set_title('Seasonality – month (M2, 95% CI)', loc='left', fontsize=10.5, color=INK, fontweight='bold')
 for a in axes.flat[:3]:
-    a.set_xlabel('% thay đổi lượng bán (KTC 95%)')
-fig.suptitle('Mức độ liên hệ của các yếu tố với lượng bán, y = ln(1 + quantity)', x=0.01, ha='left',
+    a.set_xlabel('% change in daily sales (95% CI)')
+fig.suptitle('Association of each factor with daily sales, y = ln(1 + quantity)', x=0.01, ha='left',
              fontsize=12, color=INK, fontweight='bold')
 fig.tight_layout()
 fig.savefig(OUT / 'fig_reg_effects.png'); plt.close(fig)
@@ -282,11 +282,11 @@ for i, (cat, col, name) in enumerate([('food', C_FOOD, 'Food'), ('household', C_
                 fmt='none', ecolor=INK, elinewidth=1, capsize=3)
     for xv, val, h in zip(xs, vals, his):
         ax.text(xv, h + 6, f'{val:.0f}%', ha='center', fontsize=8, color=INK)   # nhãn trên đầu error bar
-ax.set_xticks(x, BIN_LABELS); ax.set_xlabel('Mức chiết khấu (discount depth)')
-ax.set_ylabel('% tăng lượng bán so với ngày thường')
+ax.set_xticks(x, BIN_LABELS); ax.set_xlabel('Discount depth')
+ax.set_ylabel('% increase vs non-promotion days')
 ax.yaxis.grid(True, color=GRID, lw=0.6); ax.set_axisbelow(True)
 ax.legend(frameon=False, loc='upper left')
-ax.set_title('Hiệu ứng khuyến mãi theo mức chiết khấu và ngành hàng (M3, FE item×store)',
+ax.set_title('Promotion effect by discount depth and category (M3, item×store FE)',
              loc='left', fontsize=10.5, color=INK, fontweight='bold')
 fig.tight_layout(); fig.savefig(OUT / 'fig_reg_depth_bins.png'); plt.close(fig)
 
@@ -297,7 +297,7 @@ blocks_show = ['Discount', 'Category', 'Store', 'Seasonality (DOW+Month+Holiday)
 yy = np.arange(len(blocks_show))[::-1]; h = 0.38
 # Hai mô hình không phải Food/Household → dùng 2 sắc độ trung tính, tránh trùng nghĩa màu xanh/cam
 ax.barh(yy + h / 2, [e1.get(b, np.nan) for b in blocks_show], h - 0.04, color='#3d3c39', label='M1 pooled OLS')
-ax.barh(yy - h / 2, [e2.get(b, np.nan) for b in blocks_show], h - 0.04, color='#a9a8a3', label='M2 FE item×store (within)')
+ax.barh(yy - h / 2, [e2.get(b, np.nan) for b in blocks_show], h - 0.04, color='#a9a8a3', label='M2 item×store FE (within)')
 for b, yv in zip(blocks_show, yy):
     for val, off in [(e1.get(b, np.nan), h / 2), (e2.get(b, np.nan), -h / 2)]:
         if np.isfinite(val):
@@ -305,6 +305,6 @@ for b, yv in zip(blocks_show, yy):
 ax.set_yticks(yy, blocks_show); ax.set_xlabel('partial η²')
 ax.xaxis.grid(True, color=GRID, lw=0.6); ax.set_axisbelow(True)
 ax.legend(frameon=False, loc='lower right')
-ax.set_title('Effect size theo nhóm yếu tố', loc='left', fontsize=10.5, color=INK, fontweight='bold')
+ax.set_title('Effect size by factor group', loc='left', fontsize=10.5, color=INK, fontweight='bold')
 fig.tight_layout(); fig.savefig(OUT / 'fig_reg_effect_sizes.png'); plt.close(fig)
 print('\nĐã lưu bảng và hình vào', OUT)

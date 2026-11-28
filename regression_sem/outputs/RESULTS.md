@@ -12,6 +12,7 @@ Toàn bộ là phân tích **giải thích** nên dùng hết dữ liệu (khôn
 
 | Script | Dữ liệu | Nội dung |
 |---|---|---|
+| `inferential_tests.py` | `data/episodes.csv` | **0 – Inferential**: paired t-test, one-way RM ANOVA, two-way mixed ANOVA (xem mục 0 bên dưới) |
 | `regression_episodes.py` | `data/episodes.csv` | **A1 – Regression chính** (cấp đợt KM, theo EDA mục 4) |
 | `regression_analysis.py` | `data/daily_panel.parquet` | A2 – Regression bổ trợ (cấp ngày: Category, Store, Seasonality theo thứ/tháng) |
 | `sem_analysis.py` | `data/episodes.csv` | B – SEM + path diagram |
@@ -24,6 +25,22 @@ python regression_sem/regression_episodes.py > regression_sem/outputs/regression
 python regression_sem/regression_analysis.py > regression_sem/outputs/regression_log.txt
 python regression_sem/sem_analysis.py        > regression_sem/outputs/sem_log.txt      # ~10 phút (bootstrap 500 lần)
 ```
+
+---
+
+## 0. Inferential: kiểm định 3 khác biệt mà phần Descriptive đã chỉ ra
+
+Mẫu giống hệt phần Descriptive: các đợt **có bán đủ cả 3 ngày trước KM** (`pre_days = 3`), gồm 3,564 đợt KM thật (Food 3,311, Household 253) và 2,740 đợt giả. Robustness: chạy lại trên toàn bộ đợt. Mọi phép kiểm định dùng thang log: y = ln(q + 1/3).
+
+| Khác biệt | Kiểm định | Kết quả chính |
+|---|---|---|
+| Trước vs trong KM | Paired t-test (+ Wilcoxon); KM thật vs đợt giả bằng Welch | +59.9% (t(3,563) = 39.5, p < 0.001, d_z = 0.66). So với đợt giả: Food +92.9%, Household +55.8% |
+| Giữa các phase | One-way **repeated-measures** ANOVA (Greenhouse–Geisser), post-hoc Holm, Friedman | F(3; 10,689) = 954.5, p < 0.001, η²p = 0.21. 4–7 ngày sau KM thấp hơn trước KM 18.4%, nhưng đợt giả còn giảm 30% → phần lớn là hồi quy về trung bình |
+| Phase × Category | Two-way mixed ANOVA + ANOVA category × source (HC3) | Tương tác F(3; 10,686) = 34.3, p < 0.001, η²p = 0.010 (ở đợt giả chỉ 0.002). So với đợt giả: Food sau KM **cao hơn** (+40% / +19%); Household 4–7 ngày sau **thấp hơn 17.1%** (p < 0.001) |
+
+- **Robustness:** trên toàn bộ đợt, dip của Household biến mất (−1.1%, p = 0.48), vì 28% đợt không bán gì trong 3 ngày trước KM. Vì vậy dip của Household chỉ đúng với hàng Household bán đều mỗi ngày.
+- **Kết quả:** `inf_*.csv`, `fig_inf_paired.png`, `fig_inf_oneway.png`, `fig_inf_interaction.png`, `inferential_log.txt`.
+- **Bản tiếng Anh:** phương pháp, kết quả và business implications đầy đủ nằm trong `no commit/ngoc.docx` (không commit).
 
 ---
 

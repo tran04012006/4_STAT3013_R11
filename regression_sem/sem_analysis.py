@@ -225,7 +225,7 @@ print('\n===== Chỉ số phù hợp ====='); print(fstats.round(4).to_string(in
 def stars(p):
     return '***' if p < 0.001 else '**' if p < 0.01 else '*' if p < 0.05 else ''
 
-CNAMES = {'FOOD': 'Category (Food = 1)', 'DUR': 'ln(độ dài KM)', 'BASE': 'ln(pre_qty + 1/3)'}
+CNAMES = {'FOOD': 'Category (Food = 1)', 'DUR': 'ln(duration)', 'BASE': 'ln(pre_qty + 1/3)'}
 
 def draw_path_diagram(label, fname, title):
     t = P[P.model == label]
@@ -238,7 +238,7 @@ def draw_path_diagram(label, fname, title):
     ax.set_xlim(0, 11.5); ax.set_ylim(0, 7.4); ax.axis('off')
     Y, W, H, EW, EH = 4.55, 1.55, 0.72, 2.1, 1.2
     pos = {'dip13': (7.8, 6.35), 'dip47': (9.8, 6.35), 'DEPTH': (1.2, Y), 'LIFT': (4.6, Y), 'DIP': (8.8, Y)}
-    names = {'dip13': '−log_post13\n(1–3 ngày sau)', 'dip47': '−log_post47\n(4–7 ngày sau)',
+    names = {'dip13': '−log_post13\n(1–3 days after)', 'dip47': '−log_post47\n(4–7 days after)',
              'LIFT': 'SALES LIFT\n(log_lift)', 'DIP': 'POST-PROMO\nDIP', 'DEPTH': 'DISCOUNT\nDEPTH'}
     for k, (x, y) in pos.items():
         if k == 'DIP':
@@ -277,13 +277,13 @@ def draw_path_diagram(label, fname, title):
     p0, p1, rad = (pos['DEPTH'][0] + 0.4, Y - H / 2), (pos['DIP'][0], Y - EH / 2), 0.25
     arr(p0, p1, pc < 0.05, rad=rad)
     dx, dy = p1[0] - p0[0], p1[1] - p0[1]
-    label_box((p0[0] + p1[0]) / 2 + rad * dy / 2, (p0[1] + p1[1]) / 2 - rad * dx / 2, f"c' = {c:.2f}{stars(pc)}  (trực tiếp)")
+    label_box((p0[0] + p1[0]) / 2 + rad * dy / 2, (p0[1] + p1[1]) / 2 - rad * dx / 2, f"c' = {c:.2f}{stars(pc)}  (direct)")
 
     ctrls = [k for k in ('FOOD', 'DUR', 'BASE') if (t.rval == k).any()]
     cx, cy, cw, ch = 5.75, 1.95, 8.4, 0.62
     ax.add_patch(FancyBboxPatch((cx - cw / 2, cy - ch / 2), cw, ch, boxstyle='round,pad=0.02,rounding_size=0.08',
                                 fc='white', ec=NEU, lw=1.0))
-    ax.text(cx, cy, 'Biến kiểm soát: ' + ' · '.join(CNAMES[k] for k in ctrls) + ' · cửa hàng · promo_type · lễ',
+    ax.text(cx, cy, 'Controls: ' + ' · '.join(CNAMES[k] for k in ctrls) + ' · store · promo_type · holiday',
             ha='center', va='center', fontsize=8.3, color=INK2)
     for dst, xs in [('DEPTH', 0.85), ('LIFT', 4.6), ('DIP', 8.8)]:
         top = Y - (EH / 2 if dst == 'DIP' else H / 2)
@@ -301,19 +301,19 @@ def draw_path_diagram(label, fname, title):
     r = res[res.model == label].set_index('effect')
     ind, tot = r.loc['indirect_ab'], r.loc['total']
     s = fstats[fstats.model == label].iloc[0]
-    txt = (f"Gián tiếp a×b = {ind.std_estimate:.3f}  [{ind.std_ci_low:.3f}; {ind.std_ci_high:.3f}]\n"
-           f"Trực tiếp c'  = {c:.3f}\n"
-           f"Tổng            = {tot.std_estimate:.3f}  [{tot.std_ci_low:.3f}; {tot.std_ci_high:.3f}]\n"
-           f"N = {int(s.N)} đợt · χ²({int(s.DoF)}) = {s.chi2:.1f} · CFI = {s.CFI:.3f} · RMSEA = {s.RMSEA:.3f}")
+    txt = (f"Indirect a×b = {ind.std_estimate:.3f}  [{ind.std_ci_low:.3f}; {ind.std_ci_high:.3f}]\n"
+           f"Direct c'      = {c:.3f}\n"
+           f"Total           = {tot.std_estimate:.3f}  [{tot.std_ci_low:.3f}; {tot.std_ci_high:.3f}]\n"
+           f"N = {int(s.N)} episodes · χ²({int(s.DoF)}) = {s.chi2:.1f} · CFI = {s.CFI:.3f} · RMSEA = {s.RMSEA:.3f}")
     ax.text(11.35, 1.3, txt, ha='right', va='top', multialignment='left', fontsize=8.3, color=INK,
             bbox=dict(boxstyle='round,pad=0.4', fc='#f3f2ee', ec='none'))
     ax.text(0.15, 7.3, title, fontsize=12, fontweight='bold', color=INK, va='top')
-    ax.text(0.15, 0.05, f'Hệ số chuẩn hóa. *** p<0.001, ** p<0.01, * p<0.05; nét đứt = không có ý nghĩa thống kê. '
-                        f'KTC 95% (trong ngoặc): cluster bootstrap theo item, {N_BOOT} lần.',
+    ax.text(0.15, 0.05, f'Standardised coefficients. *** p<0.001, ** p<0.01, * p<0.05; dashed = not significant. '
+                        f'95% CI in brackets: item-cluster bootstrap, {N_BOOT} resamples.',
             fontsize=7.5, color=INK2, va='bottom')
     fig.savefig(OUT / fname, bbox_inches='tight'); plt.close(fig)
 
-draw_path_diagram('Promo – gộp', 'fig_sem_path_diagram.png', 'SEM Path Diagram – Discount → Sales Lift → Post-Promotion Dip')
+draw_path_diagram('Promo – gộp', 'fig_sem_path_diagram.png', 'SEM path diagram – discount → sales lift → post-promotion dip (all promotion episodes)')
 draw_path_diagram('Promo – Food', 'fig_sem_path_food.png', 'SEM Path Diagram – Food')
 draw_path_diagram('Promo – Household', 'fig_sem_path_household.png', 'SEM Path Diagram – Household')
 
@@ -323,8 +323,8 @@ def errbars(ax, v, yv, lo, hi):
                 elinewidth=1, capsize=2.5)   # KTC percentile có thể không chứa ước lượng điểm → clip
 
 fig, ax = plt.subplots(figsize=(8, 4.2))
-effects = [('a', 'a: Depth → Lift'), ('b', 'b: Lift → Dip'), ('c_direct', "c': Depth → Dip (trực tiếp)"),
-           ('indirect_ab', 'a×b: Depth → Lift → Dip'), ('total', 'Tổng: Depth → Dip')]
+effects = [('a', 'a: Depth → Lift'), ('b', 'b: Lift → Dip'), ('c_direct', "c': Depth → Dip (direct)"),
+           ('indirect_ab', 'a×b: Depth → Lift → Dip'), ('total', 'Total: Depth → Dip')]
 yy = np.arange(len(effects))[::-1]; h = 0.36
 for i, (grp, col) in enumerate([('Promo – Food', C_FOOD), ('Promo – Household', C_HH)]):
     r = res[res.model == grp].set_index('effect')
@@ -336,17 +336,17 @@ for i, (grp, col) in enumerate([('Promo – Food', C_FOOD), ('Promo – Househol
     for val, y_, h_ in zip(v, yv, hi):
         ax.text(max(h_, 0) + 0.008, y_, f'{val:+.3f}', va='center', fontsize=8, color=INK)
 ax.axvline(0, color=INK2, lw=0.8)
-ax.set_yticks(yy, [l for _, l in effects]); ax.set_xlabel('Hệ số chưa chuẩn hóa (KTC 95% bootstrap)')
+ax.set_yticks(yy, [l for _, l in effects]); ax.set_xlabel('Unstandardised coefficient (95% bootstrap CI)')
 ax.xaxis.grid(True, color=GRID, lw=0.6); ax.set_axisbelow(True)
 xl = ax.get_xlim(); ax.set_xlim(xl[0], xl[1] + 0.06)
 ax.legend(frameon=False, loc='best')
-ax.set_title('So sánh đa nhóm: Food vs Household (đợt KM thật)', loc='left', fontsize=10.5, fontweight='bold', color=INK)
+ax.set_title('Multi-group comparison: Food vs Household (promotion episodes)', loc='left', fontsize=10.5, fontweight='bold', color=INK)
 fig.tight_layout(); fig.savefig(OUT / 'fig_sem_group_comparison.png'); plt.close(fig)
 
 # Đường b: KM thật vs đợt giả
 fig, ax = plt.subplots(figsize=(7.6, 3.4))
 grps = ['gộp', 'Food', 'Household']; yy = np.arange(len(grps))[::-1]; h = 0.36
-for i, (src, col, name) in enumerate([('Promo', INK2, 'KM thật'), ('Placebo', C_PLACEBO, 'Đợt giả (đối chứng)')]):
+for i, (src, col, name) in enumerate([('Promo', INK2, 'Promotion episodes'), ('Placebo', C_PLACEBO, 'Placebo episodes (control)')]):
     r = res[(res.effect == 'b')].set_index('model')
     v = np.array([r.loc[f'{src} – {g}', 'estimate'] for g in grps])
     lo = np.array([r.loc[f'{src} – {g}', 'ci_low'] for g in grps]); hi = np.array([r.loc[f'{src} – {g}', 'ci_high'] for g in grps])
@@ -356,11 +356,11 @@ for i, (src, col, name) in enumerate([('Promo', INK2, 'KM thật'), ('Placebo', 
     for val, y_, l_ in zip(v, yv, lo):
         ax.text(min(l_, 0) - 0.01, y_, f'{val:+.3f}', va='center', ha='right', fontsize=8, color=INK)
 ax.axvline(0, color=INK2, lw=0.8)
-ax.set_yticks(yy, grps); ax.set_xlabel('b: Lift → Dip (chưa chuẩn hóa, KTC 95% bootstrap)')
+ax.set_yticks(yy, ['All' if g == 'gộp' else g for g in grps]); ax.set_xlabel('b: Lift → Dip (unstandardised, 95% bootstrap CI)')
 xl = ax.get_xlim(); ax.set_xlim(xl[0] - 0.08, max(xl[1], 0.05))
 ax.xaxis.grid(True, color=GRID, lw=0.6); ax.set_axisbelow(True)
 ax.legend(frameon=False, loc='lower right', bbox_to_anchor=(1.0, 1.0), ncol=2, fontsize=8.5)
-ax.set_title('Đường Lift → Dip: KM thật so với đợt giả', loc='left', fontsize=10.5, fontweight='bold', color=INK,
+ax.set_title('Lift → Dip path: promotion vs placebo episodes', loc='left', fontsize=10.5, fontweight='bold', color=INK,
              pad=22)
 fig.tight_layout(); fig.savefig(OUT / 'fig_sem_placebo_b.png'); plt.close(fig)
 print('\nĐã lưu bảng và hình vào', OUT)
