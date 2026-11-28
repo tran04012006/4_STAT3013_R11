@@ -9,7 +9,6 @@ This project analyzes how retail sales change before, during, and after promotio
 | Resource | Direct link |
 | --- | --- |
 | Processed dataset (`daily_panel.parquet`) | https://www.kaggle.com/datasets/svizor/retail-sales-forecasting-data/discussion?sort=recent-comments&fbclid=IwY2xjawV3TlNleHRuA2FlbQIxMQBwZG9mA3NydGMGYXBwX2lkATAAAR8ttYAdJBtjzniQs0JIKMvuQNtkpb7IJGa_QyducDUaInx_ZwIjZfMKMsn8lw_aem_iL3kMF6cOBQ0fFNBcHg7Ng |
-
 | 15-minute project demo video | `REPLACE_WITH_DIRECT_DEMO_VIDEO_URL` |
 
 The processed dataset contains daily item–store observations, including units sold, product category, promotion phase, discount depth, and the train, validation, and test split. Use the dataset to rerun model training and evaluation.
